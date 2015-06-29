@@ -1,2 +1,1 @@
-# highdimensional-benchmark
-A benchmark for anonymizing high-dimensional data with ARX
+# A benchmark for anonymization of high-dimensional data with ARX
