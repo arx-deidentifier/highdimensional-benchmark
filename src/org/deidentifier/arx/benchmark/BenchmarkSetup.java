@@ -122,7 +122,7 @@ public class BenchmarkSetup {
                 return "d";
             }
         },
-        RISK_BASED {
+        P_UNIQUENESS {
             @Override
             public String toString() {
                 return "r";
@@ -221,7 +221,7 @@ public class BenchmarkSetup {
                 sensitive = getSensitiveAttribute(dataset);
                 config.addCriterion(new HierarchicalDistanceTCloseness(sensitive, 0.2d, getHierarchy(dataset, sensitive)));
                 break;
-            case RISK_BASED:
+            case P_UNIQUENESS:
                 config.addCriterion(new PopulationUniqueness(0.01d, ARXPopulationModel.create(Region.USA)));
                 break;
             default:
