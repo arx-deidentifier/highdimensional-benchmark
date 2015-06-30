@@ -26,6 +26,11 @@ import org.deidentifier.arx.BenchmarkSetup.BenchmarkAlgorithm;
 import org.deidentifier.arx.BenchmarkSetup.BenchmarkCriterion;
 import org.deidentifier.arx.BenchmarkSetup.BenchmarkDataset;
 import org.deidentifier.arx.BenchmarkSetup.BenchmarkUtilityMeasure;
+import org.deidentifier.arx.algorithm.AbstractAlgorithm;
+import org.deidentifier.arx.algorithm.AlgorithmFlash;
+import org.deidentifier.arx.algorithm.AlgorithmLightning;
+import org.deidentifier.arx.algorithm.AlgorithmMinimal;
+import org.deidentifier.arx.algorithm.FLASHStrategy;
 import org.deidentifier.arx.framework.check.NodeChecker;
 import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction;
 import org.deidentifier.arx.framework.data.DataManager;
@@ -127,5 +132,61 @@ public class BenchmarkEnvironment {
                                       config);
     }
 
+    /**
+     * Returns the resulting utility value as a double
+     * @param algorithm
+     * @param dataset
+     * @param measure
+     * @param criterion
+     * @param timeLimit
+     * @param suppressionLimit
+     * @return
+     * @throws IOException 
+     */
+    public static double[] getExecutionTimeAndInformationLoss(BenchmarkAlgorithm algorithm,
+                                                              BenchmarkDataset dataset,
+                                                              BenchmarkUtilityMeasure measure,
+                                                              BenchmarkCriterion criterion,
+                                                              int timeLimit,
+                                                              double suppressionLimit) throws IOException {
 
+        // Create environment
+        BenchmarkEnvironment environment = new BenchmarkEnvironment(algorithm, dataset, measure, criterion, suppressionLimit);
+
+        // Create an algorithm instance
+        AbstractAlgorithm implementation;
+        switch (algorithm) {
+        case DATAFLY:
+        case IGREEDY:
+            implementation = new AlgorithmMinimal(environment.solutions, environment.checker);
+            break;
+        case FLASH:
+            FLASHStrategy strategy = new FLASHStrategy(environment.solutions, environment.manager.getHierarchies());
+            implementation = new AlgorithmFlash(environment.solutions, environment.checker, strategy);
+            break;
+        case LIGHTNIG_MINIMAL:
+            implementation = new AlgorithmLightning(environment.solutions, environment.checker, 0);
+            break;
+        case LIGHTNING:
+            implementation = new AlgorithmLightning(environment.solutions, environment.checker, timeLimit);
+            break;
+        default:
+            throw new RuntimeException("Invalid algorithm");
+        }
+
+        // Execute
+        long time = System.currentTimeMillis();
+        implementation.traverse();
+        time = System.currentTimeMillis() - time;
+
+        // Return if possible
+        if (algorithm != BenchmarkAlgorithm.DATAFLY && algorithm != BenchmarkAlgorithm.IGREEDY) { 
+            return new double[]{time, (Double) implementation.getGlobalOptimum().getInformationLoss().getValue()}; 
+        }
+
+        // Else repeat to convert
+        int[] optimum = implementation.getGlobalOptimum().getGeneralization();
+        environment = new BenchmarkEnvironment(BenchmarkAlgorithm.FLASH, dataset, measure, criterion, suppressionLimit);
+        return new double[]{time, (Double) environment.checker.check(environment.solutions.getTransformation(optimum)).informationLoss.getValue()};
+    }
 }
