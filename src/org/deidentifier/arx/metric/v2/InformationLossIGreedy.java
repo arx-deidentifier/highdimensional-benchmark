@@ -1,6 +1,8 @@
 /*
- * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2015 Florian Kohlmayer, Fabian Prasser
+ * Source code of the experiments from our 2015 paper 
+ * "Utility-driven anonymization of high-dimensional data"
+ *      
+ * Copyright (C) 2015 Fabian Prasser, Raffael Bild, Johanna Eicher, Helmut Spengler, Florian Kohlmayer
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +28,7 @@ import org.deidentifier.arx.metric.InformationLoss;
  * 
  * @author Fabian Prasser
  */
-public class ILImprovedGreedy extends InformationLoss<double[]> {
+public class InformationLossIGreedy extends InformationLoss<double[]> {
 
     /** SVUID */
     private static final long serialVersionUID = 3193042896130786734L;
@@ -38,13 +40,13 @@ public class ILImprovedGreedy extends InformationLoss<double[]> {
      * 
      * @param value
      */
-    ILImprovedGreedy(final double value[]) {
+    InformationLossIGreedy(final double value[]) {
         this.value = value;
     }
 
     @Override
     public InformationLoss<double[]> clone() {
-        return new ILImprovedGreedy(value);
+        return new InformationLossIGreedy(value);
 
     }
 
@@ -54,12 +56,11 @@ public class ILImprovedGreedy extends InformationLoss<double[]> {
             throw new IllegalArgumentException("Argument must not be null");
         } else {
             int greedy = Double.valueOf(this.value[0])
-                               .compareTo(Double.valueOf(((ILImprovedGreedy) other).value[0]));
+                               .compareTo(Double.valueOf(((InformationLossIGreedy) other).value[0]));
             int datafly = Double.valueOf(this.value[1])
-                                .compareTo(Double.valueOf(((ILImprovedGreedy) other).value[1]));
+                                .compareTo(Double.valueOf(((InformationLossIGreedy) other).value[1]));
 
-            // use comparison of greatest minimal equivalence class size if not
-            // equal
+            // use comparison of greatest minimal equivalence class size if not equal
             if (greedy != 0) {
                 return greedy;
             }
@@ -75,7 +76,7 @@ public class ILImprovedGreedy extends InformationLoss<double[]> {
         if (this == obj) return true;
         if (obj == null) return false;
         if (getClass() != obj.getClass()) return false;
-        ILImprovedGreedy other = (ILImprovedGreedy) obj;
+        InformationLossIGreedy other = (InformationLossIGreedy) obj;
         return Arrays.equals(this.value, other.value);
     }
 
@@ -92,14 +93,14 @@ public class ILImprovedGreedy extends InformationLoss<double[]> {
     @Override
     public void max(final InformationLoss<?> other) {
         if (this.compareTo(other) < 0) {
-            this.value = ((ILImprovedGreedy) other).value;
+            this.value = ((InformationLossIGreedy) other).value;
         }
     }
 
     @Override
     public void min(final InformationLoss<?> other) {
         if (this.compareTo(other) > 0) {
-            this.value = ((ILImprovedGreedy) other).value;
+            this.value = ((InformationLossIGreedy) other).value;
         }
     }
 

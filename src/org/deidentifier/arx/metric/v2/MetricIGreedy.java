@@ -1,6 +1,8 @@
 /*
- * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2015 Florian Kohlmayer, Fabian Prasser
+ * Source code of the experiments from our 2015 paper 
+ * "Utility-driven anonymization of high-dimensional data"
+ *      
+ * Copyright (C) 2015 Fabian Prasser, Raffael Bild, Johanna Eicher, Helmut Spengler, Florian Kohlmayer
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,7 +35,7 @@ import org.deidentifier.arx.metric.Metric;
  *
  * @author Fabian Prasser
  */
-public class MetricSDIGreedy extends Metric<ILImprovedGreedy> {
+public class MetricIGreedy extends Metric<InformationLossIGreedy> {
    
     /** SVUID */
     private static final long         serialVersionUID = -2464970491333541188L;
@@ -47,7 +49,7 @@ public class MetricSDIGreedy extends Metric<ILImprovedGreedy> {
      * @param monotonic
      * @param independent
      */
-    public MetricSDIGreedy() {
+    public MetricIGreedy() {
         super(false, false);
     }
 
@@ -62,13 +64,13 @@ public class MetricSDIGreedy extends Metric<ILImprovedGreedy> {
     }
 
     @Override
-    protected InformationLossWithBound<ILImprovedGreedy> getInformationLossInternal(Transformation node, HashGroupifyEntry entry) {
-        return new InformationLossWithBound<ILImprovedGreedy>(
-                new ILImprovedGreedy(new double[]{entry.count, entry.count}), new ILImprovedGreedy(new double[]{entry.count, entry.count}));
+    protected InformationLossWithBound<InformationLossIGreedy> getInformationLossInternal(Transformation node, HashGroupifyEntry entry) {
+        return new InformationLossWithBound<InformationLossIGreedy>(
+                new InformationLossIGreedy(new double[]{entry.count, entry.count}), new InformationLossIGreedy(new double[]{entry.count, entry.count}));
     }
 
     @Override
-    protected InformationLossWithBound<ILImprovedGreedy> getInformationLossInternal(Transformation node, HashGroupify g) {
+    protected InformationLossWithBound<InformationLossIGreedy> getInformationLossInternal(Transformation node, HashGroupify g) {
 
         // Determine minimal equivalence class size (worst case per generalization)
         int greedy = Integer.MAX_VALUE;
@@ -89,16 +91,16 @@ public class MetricSDIGreedy extends Metric<ILImprovedGreedy> {
         datafly = -datafly;
 
         double[] array = new double[] { greedy, datafly };
-        return new InformationLossWithBound<ILImprovedGreedy>(new ILImprovedGreedy(array), new ILImprovedGreedy(array));
+        return new InformationLossWithBound<InformationLossIGreedy>(new InformationLossIGreedy(array), new InformationLossIGreedy(array));
     }
 
     @Override
-    protected ILImprovedGreedy getLowerBoundInternal(Transformation node) {
+    protected InformationLossIGreedy getLowerBoundInternal(Transformation node) {
         return null;
     }
 
     @Override
-    protected ILImprovedGreedy getLowerBoundInternal(Transformation node, HashGroupify groupify) {
+    protected InformationLossIGreedy getLowerBoundInternal(Transformation node, HashGroupify groupify) {
         return getInformationLossInternal(node, groupify).getLowerBound();
     }
 

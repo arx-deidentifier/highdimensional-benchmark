@@ -1,34 +1,28 @@
 /*
- * Source code of our CBMS 2014 paper "A benchmark of globally-optimal 
- *      methods for the de-identification of biomedical data"
+ * Source code of the experiments from our 2015 paper 
+ * "Utility-driven anonymization of high-dimensional data"
  *      
- * Copyright (C) 2014 Florian Kohlmayer, Fabian Prasser
+ * Copyright (C) 2015 Fabian Prasser, Raffael Bild, Johanna Eicher, Helmut Spengler, Florian Kohlmayer
  * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
-package org.deidentifier.arx.benchmark;
+package org.deidentifier.arx;
 
 import java.io.IOException;
 
-import org.deidentifier.arx.ARXConfiguration;
-import org.deidentifier.arx.ARXPopulationModel;
 import org.deidentifier.arx.ARXPopulationModel.Region;
-import org.deidentifier.arx.AttributeType;
 import org.deidentifier.arx.AttributeType.Hierarchy;
-import org.deidentifier.arx.Data;
-import org.deidentifier.arx.DataSubset;
 import org.deidentifier.arx.criteria.DPresence;
 import org.deidentifier.arx.criteria.HierarchicalDistanceTCloseness;
 import org.deidentifier.arx.criteria.KAnonymity;
@@ -36,8 +30,8 @@ import org.deidentifier.arx.criteria.PopulationUniqueness;
 import org.deidentifier.arx.criteria.RecursiveCLDiversity;
 import org.deidentifier.arx.metric.Metric;
 import org.deidentifier.arx.metric.Metric.AggregateFunction;
-import org.deidentifier.arx.metric.v2.MetricSDDataFly;
-import org.deidentifier.arx.metric.v2.MetricSDIGreedy;
+import org.deidentifier.arx.metric.v2.MetricDataFly;
+import org.deidentifier.arx.metric.v2.MetricIGreedy;
 
 /**
  * This class encapsulates most of the parameters of a benchmark run
@@ -192,47 +186,45 @@ public class BenchmarkSetup {
      * @param dataset
      * @param utility
      * @param algorithm
-     * @param criteria
+     * @param criterion
      * @return
      * @throws IOException
      */
     public static ARXConfiguration getConfiguration(BenchmarkDataset dataset, 
                                                     BenchmarkUtilityMeasure utility,
                                                     BenchmarkAlgorithm algorithm,
-                                                    BenchmarkCriterion... criteria) throws IOException {
+                                                    BenchmarkCriterion criterion) throws IOException {
         
         ARXConfiguration config = ARXConfiguration.create();
         config.setMetric(Metric.createEntropyMetric(true));
         config.setMaxOutliers(0d);
-        
-        for (BenchmarkCriterion c : criteria) {
-            switch (c) {
-            case D_PRESENCE:
-                config.addCriterion(new DPresence(0.05d, 0.15d, getResearchSubset(dataset)));
-                break;
-            case K_ANONYMITY:
-                config.addCriterion(new KAnonymity(5));
-                break;
-            case L_DIVERSITY:
-                String sensitive = getSensitiveAttribute(dataset);
-                config.addCriterion(new RecursiveCLDiversity(sensitive, 4, 3));
-                break;
-            case T_CLOSENESS:
-                sensitive = getSensitiveAttribute(dataset);
-                config.addCriterion(new HierarchicalDistanceTCloseness(sensitive, 0.2d, getHierarchy(dataset, sensitive)));
-                break;
-            case P_UNIQUENESS:
-                config.addCriterion(new PopulationUniqueness(0.01d, ARXPopulationModel.create(Region.USA)));
-                break;
-            default:
-                throw new RuntimeException("Invalid criterion");
-            }
+
+        switch (criterion) {
+        case D_PRESENCE:
+            config.addCriterion(new DPresence(0.05d, 0.15d, getResearchSubset(dataset)));
+            break;
+        case K_ANONYMITY:
+            config.addCriterion(new KAnonymity(5));
+            break;
+        case L_DIVERSITY:
+            String sensitive = getSensitiveAttribute(dataset);
+            config.addCriterion(new RecursiveCLDiversity(sensitive, 4, 3));
+            break;
+        case T_CLOSENESS:
+            sensitive = getSensitiveAttribute(dataset);
+            config.addCriterion(new HierarchicalDistanceTCloseness(sensitive, 0.2d, getHierarchy(dataset, sensitive)));
+            break;
+        case P_UNIQUENESS:
+            config.addCriterion(new PopulationUniqueness(0.01d, ARXPopulationModel.create(Region.USA)));
+            break;
+        default:
+            throw new RuntimeException("Invalid criterion");
         }
-        
+
         if (algorithm == BenchmarkAlgorithm.DATAFLY) {
-            config.setMetric(new MetricSDDataFly());
+            config.setMetric(new MetricDataFly());
         } else if (algorithm == BenchmarkAlgorithm.IGREEDY) {
-            config.setMetric(new MetricSDIGreedy());
+            config.setMetric(new MetricIGreedy());
         } else if (utility == BenchmarkUtilityMeasure.LOSS){
             config.setMetric(Metric.createLossMetric(AggregateFunction.GEOMETRIC_MEAN));
         } else if (utility == BenchmarkUtilityMeasure.AECS){
@@ -246,13 +238,13 @@ public class BenchmarkSetup {
     /**
      * Configures and returns the dataset 
      * @param dataset
-     * @param criteria
+     * @param criterion
      * @return
      * @throws IOException
      */
     public static Data getData(BenchmarkDataset dataset, 
-                               BenchmarkCriterion[] criteria) throws IOException {
-        return getData(dataset, criteria, Integer.MAX_VALUE);
+                               BenchmarkCriterion criterion) throws IOException {
+        return getData(dataset, criterion, Integer.MAX_VALUE);
     }
     
     /**
@@ -268,14 +260,14 @@ public class BenchmarkSetup {
     /**
      * Configures and returns the dataset 
      * @param dataset
-     * @param criteria
+     * @param criterion
      * @param qiCount
      * @return
      * @throws IOException
      */
     @SuppressWarnings("incomplete-switch")
     public static Data getData(BenchmarkDataset dataset, 
-                               BenchmarkCriterion[] criteria,
+                               BenchmarkCriterion criterion,
                                int qiCount) throws IOException {
         Data data = null;
         switch (dataset) {
@@ -304,7 +296,7 @@ public class BenchmarkSetup {
             throw new RuntimeException("Invalid dataset");
         }
 
-        if (criteria != null) {
+        if (criterion != null) {
             int count = 0;
             for (String qi : getQuasiIdentifyingAttributes(dataset)) {
                 data.getDefinition().setAttributeType(qi, getHierarchy(dataset, qi));
@@ -313,14 +305,12 @@ public class BenchmarkSetup {
                     break;
                 }
             }
-            for (BenchmarkCriterion c : criteria) {
-                switch (c) {
-                case L_DIVERSITY:
-                case T_CLOSENESS:
-                    String sensitive = getSensitiveAttribute(dataset);
-                    data.getDefinition().setAttributeType(sensitive, AttributeType.SENSITIVE_ATTRIBUTE);
-                    break;
-                }
+            switch (criterion) {
+            case L_DIVERSITY:
+            case T_CLOSENESS:
+                String sensitive = getSensitiveAttribute(dataset);
+                data.getDefinition().setAttributeType(sensitive, AttributeType.SENSITIVE_ATTRIBUTE);
+                break;
             }
         }
 
@@ -557,5 +547,19 @@ public class BenchmarkSetup {
         default:
             throw new RuntimeException("Invalid dataset");
         }
+    }
+    
+    /**
+     * Returns the according utility measure
+     * @param measure
+     * @return
+     */
+    public static Metric<?> getMeasure(BenchmarkUtilityMeasure measure) {
+        if (measure == BenchmarkUtilityMeasure.AECS) {
+            return Metric.createAECSMetric();
+        } else if (measure == BenchmarkUtilityMeasure.LOSS) {
+            return Metric.createLossMetric();
+        }
+        throw new RuntimeException("Invalid measure");
     }
 }

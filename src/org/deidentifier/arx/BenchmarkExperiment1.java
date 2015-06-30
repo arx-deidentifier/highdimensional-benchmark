@@ -1,9 +1,28 @@
-package org.deidentifier.arx.benchmark;
+/*
+ * Source code of the experiments from our 2015 paper 
+ * "Utility-driven anonymization of high-dimensional data"
+ *      
+ * Copyright (C) 2015 Fabian Prasser, Raffael Bild, Johanna Eicher, Helmut Spengler, Florian Kohlmayer
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.deidentifier.arx;
 
 import java.io.IOException;
 
-import org.deidentifier.arx.benchmark.BenchmarkSetup.BenchmarkCriterion;
-import org.deidentifier.arx.benchmark.BenchmarkSetup.BenchmarkDataset;
+import org.deidentifier.arx.BenchmarkSetup.BenchmarkCriterion;
+import org.deidentifier.arx.BenchmarkSetup.BenchmarkDataset;
 
 import de.linearbits.subframe.Benchmark;
 import de.linearbits.subframe.analyzer.buffered.BufferedArithmeticMeanAnalyzer;
@@ -17,11 +36,11 @@ public class BenchmarkExperiment1 {
      */
     private static BenchmarkDataset[] getDatasets() {
         return new BenchmarkDataset[] { 
-         BenchmarkDataset.ADULT,
-         BenchmarkDataset.CUP,
-         BenchmarkDataset.FARS,
-         BenchmarkDataset.ATUS,
-         BenchmarkDataset.IHIS
+                BenchmarkDataset.ADULT,
+                BenchmarkDataset.CUP,
+                BenchmarkDataset.FARS,
+                BenchmarkDataset.ATUS,
+                BenchmarkDataset.IHIS
         };
     }
 
@@ -29,14 +48,14 @@ public class BenchmarkExperiment1 {
      * Returns all sets of criteria
      * @return
      */
-    private static BenchmarkCriterion[][] getCriteria() {
-        BenchmarkCriterion[][] result = new BenchmarkCriterion[11][];
-        result[0] = new BenchmarkCriterion[] { BenchmarkCriterion.K_ANONYMITY };
-        result[1] = new BenchmarkCriterion[] { BenchmarkCriterion.L_DIVERSITY };
-        result[2] = new BenchmarkCriterion[] { BenchmarkCriterion.T_CLOSENESS };
-        result[3] = new BenchmarkCriterion[] { BenchmarkCriterion.D_PRESENCE };
-        result[4] = new BenchmarkCriterion[] { BenchmarkCriterion.P_UNIQUENESS };
-        return result;
+    private static BenchmarkCriterion[] getCriteria() {
+        return new BenchmarkCriterion[]{
+            BenchmarkCriterion.K_ANONYMITY,
+            BenchmarkCriterion.L_DIVERSITY,
+            BenchmarkCriterion.T_CLOSENESS,
+            BenchmarkCriterion.D_PRESENCE,
+            BenchmarkCriterion.P_UNIQUENESS
+        };
     }
 
     /** Repetitions */

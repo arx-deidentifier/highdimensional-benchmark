@@ -1,6 +1,8 @@
 /*
- * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2015 Florian Kohlmayer, Fabian Prasser
+ * Source code of the experiments from our 2015 paper 
+ * "Utility-driven anonymization of high-dimensional data"
+ *      
+ * Copyright (C) 2015 Fabian Prasser, Raffael Bild, Johanna Eicher, Helmut Spengler, Florian Kohlmayer
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,7 +33,7 @@ import org.deidentifier.arx.metric.MetricConfiguration;
  *
  * @author Fabian Prasser
  */
-public class MetricSDDataFly extends AbstractMetricSingleDimensional {
+public class MetricDataFly extends AbstractMetricSingleDimensional {
 
     /** SVUID */
     private static final long serialVersionUID = 5349440837330821732L;
@@ -39,7 +41,7 @@ public class MetricSDDataFly extends AbstractMetricSingleDimensional {
     /**
      * Creates a new instance.
      */
-    public MetricSDDataFly() {
+    public MetricDataFly() {
         super(false, false);
     }
 

@@ -1,6 +1,8 @@
 /*
- * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2015 Florian Kohlmayer, Fabian Prasser
+ * Source code of the experiments from our 2015 paper 
+ * "Utility-driven anonymization of high-dimensional data"
+ *      
+ * Copyright (C) 2015 Fabian Prasser, Raffael Bild, Johanna Eicher, Helmut Spengler, Florian Kohlmayer
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -61,22 +63,18 @@ public class AlgorithmFlash extends AbstractAlgorithm {
      * @param solutionSpace
      * @param checker
      * @param strategy
-     * @param config
      */
-    public AlgorithmFlash(SolutionSpace solutionSpace,
-                              NodeChecker checker,
-                              FLASHStrategy strategy,
-                              FLASHConfiguration config) {
-
+    public AlgorithmFlash(SolutionSpace solutionSpace, NodeChecker checker, FLASHStrategy strategy) {
         super(solutionSpace, checker);
+        
         if (solutionSpace.getSize() > Integer.MAX_VALUE) {
             throw new IllegalArgumentException();
         }
         this.checked = 0;
+        this.config = ((FLASHAlgorithmImpl)FLASHAlgorithm.create(solutionSpace, checker, strategy)).config;
         this.solutionSpace.setAnonymityPropertyPredictable(config.isAnonymityPropertyPredicable());
         this.strategy = strategy;
         this.sortedSuccessors = new int[(int)solutionSpace.getSize()][];
-        this.config = config;
     }
 
     @Override
