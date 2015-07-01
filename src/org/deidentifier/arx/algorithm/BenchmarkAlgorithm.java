@@ -53,6 +53,33 @@ public abstract class BenchmarkAlgorithm extends AbstractAlgorithm {
         super(arg0, arg1);
     }
 
+    /**
+     * Returns the time at which the optimum was discovered
+     * @return
+     */
+    public int getDiscoveryTime() {
+        return discovery;
+    }
+
+    /**
+     * Returns a track record of the previous run. List containing tuples <time, utility>.
+     * @return
+     */
+    public DoubleArrayList getTrackRecord() {
+        return this.trackRecord;
+    }
+
+    @Override
+    public void traverse() {
+        this.time = System.currentTimeMillis();
+        this.search();
+    }
+    
+    /**
+     * Search method
+     */
+    protected abstract void search();
+    
     @Override
     protected void trackOptimum(Transformation arg0) {
 
@@ -68,32 +95,5 @@ public abstract class BenchmarkAlgorithm extends AbstractAlgorithm {
                 this.lastUtility = utility;
             }
         }
-    }
-
-    @Override
-    public void traverse() {
-        this.time = System.currentTimeMillis();
-        this.search();
-    }
-
-    /**
-     * Search method
-     */
-    protected abstract void search();
-    
-    /**
-     * Returns the time at which the optimum was discovered
-     * @return
-     */
-    public int getDiscoveryTime() {
-        return discovery;
-    }
-    
-    /**
-     * Returns a track record of the previous run. List containing tuples <time, utility>.
-     * @return
-     */
-    public DoubleArrayList getTrackRecord() {
-        return this.trackRecord;
     }
 }

@@ -43,21 +43,6 @@ import org.deidentifier.arx.metric.v2.MetricIGreedy;
  */
 public class BenchmarkSetup {
 
-    public static enum BenchmarkUtilityMeasure {
-        AECS {
-            @Override
-            public String toString() {
-                return "AECS";
-            }
-        },
-        LOSS {
-            @Override
-            public String toString() {
-                return "Loss";
-            }
-        },
-    }
-    
     public static enum BenchmarkAlgorithm {
         FLASH {
             @Override
@@ -90,7 +75,7 @@ public class BenchmarkSetup {
             }
         }
     }
-
+    
     public static enum BenchmarkCriterion {
         K_ANONYMITY {
             @Override
@@ -181,6 +166,21 @@ public class BenchmarkSetup {
         }
     }
 
+    public static enum BenchmarkUtilityMeasure {
+        AECS {
+            @Override
+            public String toString() {
+                return "AECS";
+            }
+        },
+        LOSS {
+            @Override
+            public String toString() {
+                return "Loss";
+            }
+        },
+    }
+
     /**
      * Returns a configuration for the ARX framework
      * @param dataset
@@ -238,6 +238,16 @@ public class BenchmarkSetup {
     /**
      * Configures and returns the dataset 
      * @param dataset
+     * @return
+     * @throws IOException
+     */
+    public static Data getData(BenchmarkDataset dataset) throws IOException {
+        return getData(dataset, null, Integer.MAX_VALUE);
+    }
+    
+    /**
+     * Configures and returns the dataset 
+     * @param dataset
      * @param criterion
      * @return
      * @throws IOException
@@ -245,16 +255,6 @@ public class BenchmarkSetup {
     public static Data getData(BenchmarkDataset dataset, 
                                BenchmarkCriterion criterion) throws IOException {
         return getData(dataset, criterion, Integer.MAX_VALUE);
-    }
-    
-    /**
-     * Configures and returns the dataset 
-     * @param dataset
-     * @return
-     * @throws IOException
-     */
-    public static Data getData(BenchmarkDataset dataset) throws IOException {
-        return getData(dataset, null, Integer.MAX_VALUE);
     }
     
     /**
@@ -344,6 +344,20 @@ public class BenchmarkSetup {
         default:
             throw new RuntimeException("Invalid dataset");
         }
+    }
+
+    /**
+     * Returns the according utility measure
+     * @param measure
+     * @return
+     */
+    public static Metric<?> getMeasure(BenchmarkUtilityMeasure measure) {
+        if (measure == BenchmarkUtilityMeasure.AECS) {
+            return Metric.createAECSMetric();
+        } else if (measure == BenchmarkUtilityMeasure.LOSS) {
+            return Metric.createLossMetric();
+        }
+        throw new RuntimeException("Invalid measure");
     }
 
     /**
@@ -526,7 +540,7 @@ public class BenchmarkSetup {
             throw new RuntimeException("Invalid dataset");
         }
     }
-
+    
     /**
      * Returns the sensitive attribute for the dataset
      * @param dataset
@@ -547,19 +561,5 @@ public class BenchmarkSetup {
         default:
             throw new RuntimeException("Invalid dataset");
         }
-    }
-    
-    /**
-     * Returns the according utility measure
-     * @param measure
-     * @return
-     */
-    public static Metric<?> getMeasure(BenchmarkUtilityMeasure measure) {
-        if (measure == BenchmarkUtilityMeasure.AECS) {
-            return Metric.createAECSMetric();
-        } else if (measure == BenchmarkUtilityMeasure.LOSS) {
-            return Metric.createLossMetric();
-        }
-        throw new RuntimeException("Invalid measure");
     }
 }

@@ -38,22 +38,13 @@ public class MetricDataFly extends AbstractMetricSingleDimensional {
     /** SVUID */
     private static final long serialVersionUID = 5349440837330821732L;
 
+    private GeneralizationHierarchy[] hierarchies;
+
     /**
      * Creates a new instance.
      */
     public MetricDataFly() {
         super(false, false);
-    }
-
-    private GeneralizationHierarchy[] hierarchies;
-
-    @Override
-    protected void initializeInternal(final DataDefinition definition,
-                                      final Data input,
-                                      final GeneralizationHierarchy[] hierarchies,
-                                      final ARXConfiguration config) {
-        super.initializeInternal(definition, input, hierarchies, config);
-        this.hierarchies = hierarchies;
     }
 
     @Override
@@ -86,11 +77,6 @@ public class MetricDataFly extends AbstractMetricSingleDimensional {
     }
 
     @Override
-    protected ILSingleDimensionalWithBound getInformationLossInternal(Transformation node, HashGroupifyEntry entry) {
-        return new ILSingleDimensionalWithBound(entry.count);
-    }
-
-    @Override
     protected ILSingleDimensionalWithBound getInformationLossInternal(final Transformation node, final HashGroupify g) {
 
         // Determine maximal number of distinct values
@@ -103,6 +89,11 @@ public class MetricDataFly extends AbstractMetricSingleDimensional {
     }
 
     @Override
+    protected ILSingleDimensionalWithBound getInformationLossInternal(Transformation node, HashGroupifyEntry entry) {
+        return new ILSingleDimensionalWithBound(entry.count);
+    }
+
+    @Override
     protected ILSingleDimensional getLowerBoundInternal(Transformation node) {
         return null;
     }
@@ -110,5 +101,14 @@ public class MetricDataFly extends AbstractMetricSingleDimensional {
     @Override
     protected ILSingleDimensional getLowerBoundInternal(Transformation node, HashGroupify groupify) {
         return getInformationLossInternal(node, groupify).getLowerBound();
+    }
+
+    @Override
+    protected void initializeInternal(final DataDefinition definition,
+                                      final Data input,
+                                      final GeneralizationHierarchy[] hierarchies,
+                                      final ARXConfiguration config) {
+        super.initializeInternal(definition, input, hierarchies, config);
+        this.hierarchies = hierarchies;
     }
 }

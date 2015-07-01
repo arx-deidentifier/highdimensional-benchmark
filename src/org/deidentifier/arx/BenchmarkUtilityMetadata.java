@@ -367,6 +367,14 @@ public class BenchmarkUtilityMetadata {
     }
 
     /**
+     * Returns all suppression limits
+     * @return
+     */
+    private static double[] getSuppressionLimits() {
+        return new double[]{0d, 0.1d, 1d};
+    }
+
+    /**
      * Returns all utility measures
      * @return
      */
@@ -375,13 +383,5 @@ public class BenchmarkUtilityMetadata {
                 BenchmarkUtilityMeasure.AECS,
                 BenchmarkUtilityMeasure.LOSS
         };
-    }
-
-    /**
-     * Returns all suppression limits
-     * @return
-     */
-    private static double[] getSuppressionLimits() {
-        return new double[]{0d, 0.1d, 1d};
     }
 }

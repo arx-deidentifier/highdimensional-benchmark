@@ -39,55 +39,15 @@ import de.linearbits.subframe.analyzer.ValueBuffer;
  */
 public class BenchmarkExperiment3 {
 
-    /**
-     * Returns all datasets for this experiment
-     * @return
-     */
-    private static BenchmarkDataset[] getDatasets() {
-        return new BenchmarkDataset[] { 
-                BenchmarkDataset.SS13ACS_15,
-                BenchmarkDataset.SS13ACS_20,
-                BenchmarkDataset.SS13ACS_25,
-                BenchmarkDataset.SS13ACS_30
-        };
-    }
-
-    /**
-     * Returns all criteria for this experiment
-     * @return
-     */
-    private static BenchmarkCriterion[] getCriteria() {
-        return new BenchmarkCriterion[]{
-            BenchmarkCriterion.K_ANONYMITY,
-            BenchmarkCriterion.P_UNIQUENESS
-        };
-    }
-
-    /**
-     * Returns all utility measures for this experiment
-     * @return
-     */
-    private static BenchmarkUtilityMeasure[] getUtilityMeasures() {
-        return new BenchmarkUtilityMeasure[] { 
-                BenchmarkUtilityMeasure.AECS,
-                BenchmarkUtilityMeasure.LOSS
-        };
-    }
-
-    /**
-     * Returns all suppression limits for this experiment
-     * @return
-     */
-    private static double[] getSuppressionLimits() {
-        return new double[]{0d, 1d};
-    }
-
     /** The benchmark instance */
     private static final Benchmark BENCHMARK         = new Benchmark(new String[] { "Utility measure", "Privacy model", "Suppression limit", "Dataset" });
+
     /** Time */
     public static final int        TIME              = BENCHMARK.addMeasure("Time");
+
     /** Utility */
     public static final int        UTILITY           = BENCHMARK.addMeasure("Utility");
+
     /** Complete search performed */
     public static final int        COMPLETE          = BENCHMARK.addMeasure("Complete");
 
@@ -122,6 +82,46 @@ public class BenchmarkExperiment3 {
                 }
             }
         }
+    }
+    /**
+     * Returns all criteria for this experiment
+     * @return
+     */
+    private static BenchmarkCriterion[] getCriteria() {
+        return new BenchmarkCriterion[]{
+            BenchmarkCriterion.K_ANONYMITY,
+            BenchmarkCriterion.P_UNIQUENESS
+        };
+    }
+    /**
+     * Returns all datasets for this experiment
+     * @return
+     */
+    private static BenchmarkDataset[] getDatasets() {
+        return new BenchmarkDataset[] { 
+                BenchmarkDataset.SS13ACS_15,
+                BenchmarkDataset.SS13ACS_20,
+                BenchmarkDataset.SS13ACS_25,
+                BenchmarkDataset.SS13ACS_30
+        };
+    }
+    /**
+     * Returns all suppression limits for this experiment
+     * @return
+     */
+    private static double[] getSuppressionLimits() {
+        return new double[]{0d, 1d};
+    }
+
+    /**
+     * Returns all utility measures for this experiment
+     * @return
+     */
+    private static BenchmarkUtilityMeasure[] getUtilityMeasures() {
+        return new BenchmarkUtilityMeasure[] { 
+                BenchmarkUtilityMeasure.AECS,
+                BenchmarkUtilityMeasure.LOSS
+        };
     }
 
     /**

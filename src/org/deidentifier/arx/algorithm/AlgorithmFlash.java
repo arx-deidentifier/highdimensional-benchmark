@@ -77,51 +77,6 @@ public class AlgorithmFlash extends BenchmarkAlgorithm {
         this.sortedSuccessors = new int[(int)solutionSpace.getSize()][];
     }
 
-    @Override
-    protected void search() {
-
-        // Determine configuration for the outer loop
-        FLASHPhaseConfiguration outerLoopConfiguration;
-        if (config.isBinaryPhaseRequired()) {
-            outerLoopConfiguration = config.getBinaryPhaseConfiguration();
-        } else {
-            outerLoopConfiguration = config.getLinearPhaseConfiguration();
-        }
-
-        // Set some triggers
-        checker.getHistory().setStorageStrategy(config.getSnapshotStorageStrategy());
-
-        // Initialize
-        PriorityQueue<Integer> queue = new PriorityQueue<Integer>(solutionSpace.getTop().getLevel(), strategy);
-        Transformation bottom = solutionSpace.getBottom();
-        Transformation top = solutionSpace.getTop();
-
-        // Check bottom for speed and remember the result to prevent repeated checks
-        NodeChecker.Result result = checker.check(bottom);
-        bottom.setProperty(solutionSpace.getPropertyForceSnapshot());
-        bottom.setData(result);
-
-        // For each node in the lattice
-        for (int level = bottom.getLevel(); level <= top.getLevel(); level++) {
-            for (int transformation : getSortedUnprocessedNodes(level, outerLoopConfiguration.getTriggerSkip())) {
-
-                // Run the correct phase
-                if (config.isBinaryPhaseRequired()) {
-                    binarySearch(transformation, queue);
-                } else {
-                    linearSearch(transformation);
-                }
-            }
-        }
-
-        // Potentially allows to better estimate utility in the lattice
-        computeUtilityForMonotonicMetrics(bottom);
-        computeUtilityForMonotonicMetrics(top);
-
-        // Remove the associated result information to leave the lattice in a consistent state
-        bottom.setData(null);
-    }
-
     /**
      * Implements the FLASH algorithm (without outer loop).
      *
@@ -268,6 +223,28 @@ public class AlgorithmFlash extends BenchmarkAlgorithm {
     }
 
     /**
+     * Sorts pointers to successor nodes according to the strategy.
+     *
+     * @param transformation
+     */
+    private int[] getSortedSuccessors(final int transformation) {
+        
+        if (sortedSuccessors[transformation] == null) {
+            List<Long> list = new ArrayList<Long>();
+            for (Iterator<Long> iter = solutionSpace.getSuccessors(transformation); iter.hasNext();){
+                list.add(iter.next());
+            }
+            int[] result = new int[list.size()];
+            for (int i=0; i<result.length; i++) {
+                result[i] = list.get(i).intValue();
+            }
+            sort(result);
+            sortedSuccessors[transformation] = result;
+        }
+        return sortedSuccessors[transformation];
+    }
+
+    /**
      * Returns all transformations that do not have the given property and sorts the resulting array
      * according to the strategy.
      *
@@ -364,25 +341,48 @@ public class AlgorithmFlash extends BenchmarkAlgorithm {
         });
     }
 
-    /**
-     * Sorts pointers to successor nodes according to the strategy.
-     *
-     * @param transformation
-     */
-    private int[] getSortedSuccessors(final int transformation) {
-        
-        if (sortedSuccessors[transformation] == null) {
-            List<Long> list = new ArrayList<Long>();
-            for (Iterator<Long> iter = solutionSpace.getSuccessors(transformation); iter.hasNext();){
-                list.add(iter.next());
-            }
-            int[] result = new int[list.size()];
-            for (int i=0; i<result.length; i++) {
-                result[i] = list.get(i).intValue();
-            }
-            sort(result);
-            sortedSuccessors[transformation] = result;
+    @Override
+    protected void search() {
+
+        // Determine configuration for the outer loop
+        FLASHPhaseConfiguration outerLoopConfiguration;
+        if (config.isBinaryPhaseRequired()) {
+            outerLoopConfiguration = config.getBinaryPhaseConfiguration();
+        } else {
+            outerLoopConfiguration = config.getLinearPhaseConfiguration();
         }
-        return sortedSuccessors[transformation];
+
+        // Set some triggers
+        checker.getHistory().setStorageStrategy(config.getSnapshotStorageStrategy());
+
+        // Initialize
+        PriorityQueue<Integer> queue = new PriorityQueue<Integer>(solutionSpace.getTop().getLevel(), strategy);
+        Transformation bottom = solutionSpace.getBottom();
+        Transformation top = solutionSpace.getTop();
+
+        // Check bottom for speed and remember the result to prevent repeated checks
+        NodeChecker.Result result = checker.check(bottom);
+        bottom.setProperty(solutionSpace.getPropertyForceSnapshot());
+        bottom.setData(result);
+
+        // For each node in the lattice
+        for (int level = bottom.getLevel(); level <= top.getLevel(); level++) {
+            for (int transformation : getSortedUnprocessedNodes(level, outerLoopConfiguration.getTriggerSkip())) {
+
+                // Run the correct phase
+                if (config.isBinaryPhaseRequired()) {
+                    binarySearch(transformation, queue);
+                } else {
+                    linearSearch(transformation);
+                }
+            }
+        }
+
+        // Potentially allows to better estimate utility in the lattice
+        computeUtilityForMonotonicMetrics(bottom);
+        computeUtilityForMonotonicMetrics(top);
+
+        // Remove the associated result information to leave the lattice in a consistent state
+        bottom.setData(null);
     }
 }

@@ -65,12 +65,6 @@ public class AlgorithmMinimal extends BenchmarkAlgorithm{
         }
     }
 
-    @Override
-    protected void search() {
-        Transformation bottom = solutionSpace.getBottom();
-        dfs(bottom);
-    }
-    
     /**
     * Performs a depth first search without backtracking
     * @param transformation
@@ -88,6 +82,7 @@ public class AlgorithmMinimal extends BenchmarkAlgorithm{
             dfs(next);
         }
     }
+    
     /**
     * Returns the successor with minimal information loss, if any, null otherwise.
     * @param transformation
@@ -113,5 +108,10 @@ public class AlgorithmMinimal extends BenchmarkAlgorithm{
             }
         }
         return result;
+    }
+    @Override
+    protected void search() {
+        Transformation bottom = solutionSpace.getBottom();
+        dfs(bottom);
     }
 }

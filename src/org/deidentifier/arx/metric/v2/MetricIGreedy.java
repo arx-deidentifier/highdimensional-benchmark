@@ -64,9 +64,8 @@ public class MetricIGreedy extends Metric<InformationLossIGreedy> {
     }
 
     @Override
-    protected InformationLossWithBound<InformationLossIGreedy> getInformationLossInternal(Transformation node, HashGroupifyEntry entry) {
-        return new InformationLossWithBound<InformationLossIGreedy>(
-                new InformationLossIGreedy(new double[]{entry.count, entry.count}), new InformationLossIGreedy(new double[]{entry.count, entry.count}));
+    public String toString() {
+        return "IGreedy";
     }
 
     @Override
@@ -95,6 +94,12 @@ public class MetricIGreedy extends Metric<InformationLossIGreedy> {
     }
 
     @Override
+    protected InformationLossWithBound<InformationLossIGreedy> getInformationLossInternal(Transformation node, HashGroupifyEntry entry) {
+        return new InformationLossWithBound<InformationLossIGreedy>(
+                new InformationLossIGreedy(new double[]{entry.count, entry.count}), new InformationLossIGreedy(new double[]{entry.count, entry.count}));
+    }
+
+    @Override
     protected InformationLossIGreedy getLowerBoundInternal(Transformation node) {
         return null;
     }
@@ -110,10 +115,5 @@ public class MetricIGreedy extends Metric<InformationLossIGreedy> {
                                       final GeneralizationHierarchy[] hierarchies,
                                       final ARXConfiguration config) {
         this.hierarchies = hierarchies;
-    }
-
-    @Override
-    public String toString() {
-        return "IGreedy";
     }
 }

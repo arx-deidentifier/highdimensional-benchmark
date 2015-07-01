@@ -38,59 +38,15 @@ import de.linearbits.subframe.analyzer.ValueBuffer;
  */
 public class BenchmarkExperiment1 {
 
-    /**
-     * Returns all datasets for this experiment
-     * @return
-     */
-    private static BenchmarkDataset[] getDatasets() {
-        return new BenchmarkDataset[] { 
-                BenchmarkDataset.ADULT,
-                BenchmarkDataset.CUP,
-                BenchmarkDataset.FARS,
-                BenchmarkDataset.ATUS,
-                BenchmarkDataset.IHIS
-        };
-    }
-
-    /**
-     * Returns all criteria for this experiment
-     * @return
-     */
-    private static BenchmarkCriterion[] getCriteria() {
-        return new BenchmarkCriterion[]{
-            BenchmarkCriterion.K_ANONYMITY,
-            BenchmarkCriterion.L_DIVERSITY,
-            BenchmarkCriterion.T_CLOSENESS,
-            BenchmarkCriterion.D_PRESENCE,
-            BenchmarkCriterion.P_UNIQUENESS
-        };
-    }
-
-    /**
-     * Returns all utility measures for this experiment
-     * @return
-     */
-    private static BenchmarkUtilityMeasure[] getUtilityMeasures() {
-        return new BenchmarkUtilityMeasure[] { 
-                BenchmarkUtilityMeasure.AECS,
-                BenchmarkUtilityMeasure.LOSS
-        };
-    }
-
-    /**
-     * Returns all suppression limits for this experiment
-     * @return
-     */
-    private static double[] getSuppressionLimits() {
-        return new double[]{0d, 0.1d};
-    }
-
     /** The benchmark instance */
     private static final Benchmark BENCHMARK = new Benchmark(new String[] { "Utility measure", "Suppression limit", "Privacy model", "Dataset"});
+
     /** Label for result quality */
     public static final int        OWN       = BENCHMARK.addMeasure("Own");
+
     /** Label for result quality */
     public static final int        DATAFLY   = BENCHMARK.addMeasure("DataFly");
+
     /** Label for result quality */
     public static final int        IGREEDY   = BENCHMARK.addMeasure("IGreedy");
 
@@ -127,6 +83,50 @@ public class BenchmarkExperiment1 {
                 }
             }
         }
+    }
+    /**
+     * Returns all criteria for this experiment
+     * @return
+     */
+    private static BenchmarkCriterion[] getCriteria() {
+        return new BenchmarkCriterion[]{
+            BenchmarkCriterion.K_ANONYMITY,
+            BenchmarkCriterion.L_DIVERSITY,
+            BenchmarkCriterion.T_CLOSENESS,
+            BenchmarkCriterion.D_PRESENCE,
+            BenchmarkCriterion.P_UNIQUENESS
+        };
+    }
+    /**
+     * Returns all datasets for this experiment
+     * @return
+     */
+    private static BenchmarkDataset[] getDatasets() {
+        return new BenchmarkDataset[] { 
+                BenchmarkDataset.ADULT,
+                BenchmarkDataset.CUP,
+                BenchmarkDataset.FARS,
+                BenchmarkDataset.ATUS,
+                BenchmarkDataset.IHIS
+        };
+    }
+    /**
+     * Returns all suppression limits for this experiment
+     * @return
+     */
+    private static double[] getSuppressionLimits() {
+        return new double[]{0d, 0.1d};
+    }
+
+    /**
+     * Returns all utility measures for this experiment
+     * @return
+     */
+    private static BenchmarkUtilityMeasure[] getUtilityMeasures() {
+        return new BenchmarkUtilityMeasure[] { 
+                BenchmarkUtilityMeasure.AECS,
+                BenchmarkUtilityMeasure.LOSS
+        };
     }
 
     /**

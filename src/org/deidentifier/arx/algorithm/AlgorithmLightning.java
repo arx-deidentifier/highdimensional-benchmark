@@ -83,45 +83,6 @@ public class AlgorithmLightning extends BenchmarkAlgorithm{
         }
     }
 
-    @Override
-    protected void search() {
-        timeStart = System.currentTimeMillis();
-        MinMaxPriorityQueue<Long> queue = new MinMaxPriorityQueue<Long>(MAX_QUEUE_SIZE, new Comparator<Long>() {
-            @Override
-            public int compare(Long arg0, Long arg1) {
-                return solutionSpace.getUtility(arg0).compareTo(solutionSpace.getUtility(arg1));
-            }
-        });
-        Transformation bottom = solutionSpace.getBottom();
-        assureChecked(bottom);
-        queue.add(bottom.getIdentifier());
-        Transformation next;
-        int step = 0;
-        Long nextId;
-        while ((nextId = queue.poll()) != null) {
-            next = solutionSpace.getTransformation(nextId);
-            if (!prune(next)) {
-                step++;
-                if (step % stepping == 0) {
-                    dfs(queue, next);
-                } else {
-                    expand(queue, next);
-                }
-                if ((timeLimit != 0 && getTime() > timeLimit) || timeLimit == 0 && getGlobalOptimum() != null) {
-                    return;
-                }
-            }
-        }
-    }
-    
-    /**
-     * Returns the current execution time
-     * @return
-     */
-    private int getTime() {
-        return (int)(System.currentTimeMillis() - timeStart);
-    }
-
     /**
     * Performs a depth first search (without backtracking) starting from the the given transformation
     * @param queue
@@ -137,6 +98,7 @@ public class AlgorithmLightning extends BenchmarkAlgorithm{
             dfs(queue, next);
         }
     }
+    
     /**
     * Returns the successor with minimal information loss, if any, null otherwise.
     * @param queue
@@ -169,7 +131,14 @@ public class AlgorithmLightning extends BenchmarkAlgorithm{
         transformation.setProperty(propertyExpanded);
         return result;
     }
-    
+
+    /**
+     * Returns the current execution time
+     * @return
+     */
+    private int getTime() {
+        return (int)(System.currentTimeMillis() - timeStart);
+    }
     /**
     * Returns whether we can prune this Transformation
     * @param transformation
@@ -186,5 +155,36 @@ public class AlgorithmLightning extends BenchmarkAlgorithm{
             if (metricMonotonic) prune = transformation.getInformationLoss().compareTo(getGlobalOptimum().getInformationLoss()) >= 0;
         }
         return (prune || transformation.hasProperty(propertyExpanded));
+    }
+    
+    @Override
+    protected void search() {
+        timeStart = System.currentTimeMillis();
+        MinMaxPriorityQueue<Long> queue = new MinMaxPriorityQueue<Long>(MAX_QUEUE_SIZE, new Comparator<Long>() {
+            @Override
+            public int compare(Long arg0, Long arg1) {
+                return solutionSpace.getUtility(arg0).compareTo(solutionSpace.getUtility(arg1));
+            }
+        });
+        Transformation bottom = solutionSpace.getBottom();
+        assureChecked(bottom);
+        queue.add(bottom.getIdentifier());
+        Transformation next;
+        int step = 0;
+        Long nextId;
+        while ((nextId = queue.poll()) != null) {
+            next = solutionSpace.getTransformation(nextId);
+            if (!prune(next)) {
+                step++;
+                if (step % stepping == 0) {
+                    dfs(queue, next);
+                } else {
+                    expand(queue, next);
+                }
+                if ((timeLimit != 0 && getTime() > timeLimit) || timeLimit == 0 && getGlobalOptimum() != null) {
+                    return;
+                }
+            }
+        }
     }
 }
