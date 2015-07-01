@@ -164,7 +164,7 @@ public class BenchmarkSetup {
         SS13ACS_20 {
             @Override
             public String toString() {
-                return "SS13ACS_10";
+                return "SS13ACS_20";
             }
         },
         SS13ACS_25 {

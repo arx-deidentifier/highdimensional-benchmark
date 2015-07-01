@@ -148,11 +148,15 @@ public class BenchmarkExperiment3 {
         double min = trackRecord.get(1);
         double max = trackRecord.get(trackRecord.size()-1);
 
-        for (int i = 0; i < trackRecord.size() / 2; i += 2) {
-            double utility = (trackRecord.get(i + 1) - min) / (max - min);
+        for (int i = 0; i < trackRecord.size(); i += 2) {
+            double utility = min == max ? 1d : (trackRecord.get(i + 1) - min) / (max - min);
             BENCHMARK.addValue(TIME, trackRecord.get(i));
             BENCHMARK.addValue(UTILITY, utility);
             BENCHMARK.addValue(COMPLETE, complete);
+            
+            if (i < trackRecord.size() - 2) {
+                BENCHMARK.addRun(measure.toString(), criterion.toString(), String.valueOf(suppressionLimit), dataset.toString());
+            }
         }
                 
     }
