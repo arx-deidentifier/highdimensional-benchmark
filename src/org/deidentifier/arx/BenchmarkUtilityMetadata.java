@@ -401,5 +401,4 @@ public class BenchmarkUtilityMetadata {
     private static double[] getSuppressionLimits() {
         return new double[]{0d, 0.1d, 1d};
     }
-
 }
