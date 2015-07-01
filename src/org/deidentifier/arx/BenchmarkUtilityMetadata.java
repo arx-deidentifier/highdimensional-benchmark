@@ -288,7 +288,7 @@ public class BenchmarkUtilityMetadata {
             for (double suppressionLimit : getSuppressionLimits()) {
                 for (BenchmarkCriterion criterion : getCriteria()) {
                     for (BenchmarkDataset dataset : getDatasets()) {
-                        computeUtilityMetadata(dataset, measure, criterion, suppressionLimit);
+                        computeMinimalAndMaximalInformationLoss(dataset, measure, criterion, suppressionLimit);
                     }
                 }
             }
@@ -304,10 +304,10 @@ public class BenchmarkUtilityMetadata {
      * @return
      * @throws IOException 
      */
-    private static double[] computeMinimalAndMaximalInformationLoss(BenchmarkDataset dataset,
-                                                                    BenchmarkUtilityMeasure measure,
-                                                                    BenchmarkCriterion criterion,
-                                                                    double suppressionLimit) throws IOException {
+    private static void computeMinimalAndMaximalInformationLoss(BenchmarkDataset dataset,
+                                                                BenchmarkUtilityMeasure measure,
+                                                                BenchmarkCriterion criterion,
+                                                                double suppressionLimit) throws IOException {
 
         // Create environment
         BenchmarkEnvironment environment = new BenchmarkEnvironment(BenchmarkAlgorithm.FLASH, dataset, measure, criterion, suppressionLimit);
@@ -328,31 +328,14 @@ public class BenchmarkUtilityMetadata {
                 max = Math.max(max, value);
             }
         }
-        return new double[] { min, max };
-    }
 
-    /**
-     * Computes and prints the according metadata
-     * @param dataset
-     * @param measure 
-     * @param criterion
-     * @param suppression
-     * @throws IOException 
-     */
-    private static void computeUtilityMetadata(BenchmarkDataset dataset,
-                                               BenchmarkUtilityMeasure measure, 
-                                               BenchmarkCriterion criterion,
-                                               double suppression) throws IOException {
-        
-        double[] values = computeMinimalAndMaximalInformationLoss(dataset, measure, criterion, suppression);
-        
         System.out.print("list.add(new UtilityMetadataEntry(");
-        System.out.print("BenchmarkDataset." + dataset.name()+", ");
-        System.out.print("BenchmarkUtilityMeasure." + measure.name()+", ");
-        System.out.print("BenchmarkCriterion." + criterion.name()+", ");
-        System.out.print(suppression+", ");
-        System.out.print(values[0]+", ");
-        System.out.print(values[1]+"));\n");
+        System.out.print("BenchmarkDataset." + dataset.name() + ", ");
+        System.out.print("BenchmarkUtilityMeasure." + measure.name() + ", ");
+        System.out.print("BenchmarkCriterion." + criterion.name() + ", ");
+        System.out.print(suppressionLimit + ", ");
+        System.out.print(min + ", ");
+        System.out.print(max + "));\n");
     }
 
     /**
