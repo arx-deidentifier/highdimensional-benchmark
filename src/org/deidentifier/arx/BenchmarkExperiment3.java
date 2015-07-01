@@ -150,6 +150,7 @@ public class BenchmarkExperiment3 {
 
         for (int i = 0; i < trackRecord.size(); i += 2) {
             double utility = min == max ? 1d : (trackRecord.get(i + 1) - min) / (max - min);
+            if (utility == -0d) utility = +0d;
             BENCHMARK.addValue(TIME, trackRecord.get(i));
             BENCHMARK.addValue(UTILITY, utility);
             BENCHMARK.addValue(COMPLETE, complete);
