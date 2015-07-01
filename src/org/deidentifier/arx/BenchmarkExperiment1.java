@@ -19,19 +19,27 @@
 
 package org.deidentifier.arx;
 
+import java.io.File;
 import java.io.IOException;
 
+import org.deidentifier.arx.BenchmarkSetup.BenchmarkAlgorithm;
 import org.deidentifier.arx.BenchmarkSetup.BenchmarkCriterion;
 import org.deidentifier.arx.BenchmarkSetup.BenchmarkDataset;
+import org.deidentifier.arx.BenchmarkSetup.BenchmarkUtilityMeasure;
 
 import de.linearbits.subframe.Benchmark;
-import de.linearbits.subframe.analyzer.buffered.BufferedArithmeticMeanAnalyzer;
-import de.linearbits.subframe.analyzer.buffered.BufferedStandardDeviationAnalyzer;
+import de.linearbits.subframe.analyzer.ValueBuffer;
 
+/**
+ * Performs the first experiment, which is a comparison of our approach with previous works
+ * using the concept of minimal anonymity.
+ *  
+ * @author Fabian Prasser
+ */
 public class BenchmarkExperiment1 {
 
     /**
-     * Returns all datasets
+     * Returns all datasets for this experiment
      * @return
      */
     private static BenchmarkDataset[] getDatasets() {
@@ -45,7 +53,7 @@ public class BenchmarkExperiment1 {
     }
 
     /**
-     * Returns all sets of criteria
+     * Returns all criteria for this experiment
      * @return
      */
     private static BenchmarkCriterion[] getCriteria() {
@@ -58,17 +66,33 @@ public class BenchmarkExperiment1 {
         };
     }
 
-    /** Repetitions */
-    private static final int       REPETITIONS       = 3;
-    /** The benchmark instance */
-    private static final Benchmark BENCHMARK         = new Benchmark(new String[] { "Algorithm", "Dataset", "Criteria" });
-    /** Label for execution times */
-    public static final int        EXECUTION_TIME    = BENCHMARK.addMeasure("Execution time");
-
-    static {
-        BENCHMARK.addAnalyzer(EXECUTION_TIME, new BufferedArithmeticMeanAnalyzer(REPETITIONS));
-        BENCHMARK.addAnalyzer(EXECUTION_TIME, new BufferedStandardDeviationAnalyzer(REPETITIONS));
+    /**
+     * Returns all utility measures for this experiment
+     * @return
+     */
+    private static BenchmarkUtilityMeasure[] getUtilityMeasures() {
+        return new BenchmarkUtilityMeasure[] { 
+                BenchmarkUtilityMeasure.AECS,
+                BenchmarkUtilityMeasure.LOSS
+        };
     }
+
+    /**
+     * Returns all suppression limits for this experiment
+     * @return
+     */
+    private static double[] getSuppressionLimits() {
+        return new double[]{0d, 0.1d};
+    }
+
+    /** The benchmark instance */
+    private static final Benchmark BENCHMARK = new Benchmark(new String[] { "Utility measure", "Suppression limit", "Privacy model", "Dataset"});
+    /** Label for result quality */
+    public static final int        OWN       = BENCHMARK.addMeasure("Own");
+    /** Label for result quality */
+    public static final int        DATAFLY   = BENCHMARK.addMeasure("DataFly");
+    /** Label for result quality */
+    public static final int        IGREEDY   = BENCHMARK.addMeasure("IGreedy");
 
     /**
      * Main entry point
@@ -77,36 +101,63 @@ public class BenchmarkExperiment1 {
      * @throws IOException
      */
     public static void main(String[] args) throws IOException {
+        
+        // Init
+        BENCHMARK.addAnalyzer(OWN, new ValueBuffer());
+        BENCHMARK.addAnalyzer(DATAFLY, new ValueBuffer());
+        BENCHMARK.addAnalyzer(IGREEDY, new ValueBuffer());
 
-//        BenchmarkDriver driver = new BenchmarkDriver(BENCHMARK);
-//
-//        // For each algorithm
-//        for (BenchmarkAlgorithm algorithm : BenchmarkSetup.getAlgorithms()) {
-//            
-//            // For each dataset
-//            for (BenchmarkDataset data : BenchmarkSetup.getDatasets()) {
-//                
-//                // For each combination of criteria
-//                for (BenchmarkCriterion[] criteria : BenchmarkSetup.getCriteria()) {
-//
-//                    // Warmup run
-//                    driver.anonymize(data, criteria, algorithm, true);
-//
-//                    // Print status info
-//                    System.out.println("Running: " + algorithm.toString() + " / " + data.toString() + " / " + Arrays.toString(criteria));
-//
-//                    // Benchmark
-//                    BENCHMARK.addRun(algorithm.toString(), data.toString(), Arrays.toString(criteria));
-//                    
-//                    // Repeat
-//                    for (int i = 0; i < REPETITIONS; i++) {
-//                        driver.anonymize(data, criteria, algorithm, false);
-//                    }
-//                    
-//                    // Write results incrementally
-//                    BENCHMARK.getResults().write(new File("results/results.csv"));
-//                }
-//            }
-//        }
+        // For each relevant combination
+        for (BenchmarkUtilityMeasure measure : getUtilityMeasures()) {
+            for (double suppressionLimit : getSuppressionLimits()) {
+                for (BenchmarkCriterion criterion : getCriteria()) {
+                    for (BenchmarkDataset dataset : getDatasets()) {
+
+                        // Run
+                        BENCHMARK.addRun(measure.toString(), String.valueOf(suppressionLimit), criterion.toString(), dataset.toString());
+                        
+                        // Measurements
+                        performExperiment(BenchmarkAlgorithm.LIGHTNIG_MINIMAL, OWN, dataset, measure, criterion, suppressionLimit);
+                        performExperiment(BenchmarkAlgorithm.DATAFLY, DATAFLY, dataset, measure, criterion, suppressionLimit);
+                        performExperiment(BenchmarkAlgorithm.IGREEDY, IGREEDY, dataset, measure, criterion, suppressionLimit);
+                        
+                        // Write after each experiment
+                        BENCHMARK.getResults().write(new File("results/experiment1.csv"));
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Performs one experiment
+     * @param algorithm
+     * @param benchmarkMeasure
+     * @param dataset
+     * @param measure
+     * @param criterion
+     * @param suppressionLimit
+     * @throws IOException
+     */
+    private static void performExperiment(BenchmarkAlgorithm algorithm,
+                                         int benchmarkMeasure,
+                                         BenchmarkDataset dataset,
+                                         BenchmarkUtilityMeasure measure,
+                                         BenchmarkCriterion criterion,
+                                         double suppressionLimit) throws IOException {
+
+        System.out.println("Performing experiment 1 - " + algorithm + "/" + dataset + "/" + measure + "/" +criterion + "/" + suppressionLimit);
+        
+        // Measure utility
+        double value = BenchmarkEnvironment.performRun(algorithm, dataset, measure, criterion, 0, suppressionLimit).informationLoss;
+        
+        // Normalize
+        double min = BenchmarkUtilityMetadata.getMinimalAndMaximalInformationLoss(dataset, measure, criterion, suppressionLimit)[0];
+        double max = BenchmarkUtilityMetadata.getMinimalAndMaximalInformationLoss(dataset, measure, criterion, suppressionLimit)[1];
+        value = value - min;
+        value /= max-min;
+        
+        // Add
+        BENCHMARK.addValue(benchmarkMeasure, value);
     }
 }

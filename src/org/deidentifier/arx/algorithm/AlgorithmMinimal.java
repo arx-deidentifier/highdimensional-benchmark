@@ -37,7 +37,7 @@ import de.linearbits.jhpl.PredictiveProperty;
  * @author Johanna Eicher
  * @author Helmut Spengler
  */
-public class AlgorithmMinimal extends AbstractAlgorithm{
+public class AlgorithmMinimal extends BenchmarkAlgorithm{
    
     /** Property */
     private final PredictiveProperty propertyChecked;
@@ -66,7 +66,7 @@ public class AlgorithmMinimal extends AbstractAlgorithm{
     }
 
     @Override
-    public void traverse() {
+    protected void search() {
         Transformation bottom = solutionSpace.getBottom();
         dfs(bottom);
     }

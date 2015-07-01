@@ -43,7 +43,7 @@ import de.linearbits.jhpl.PredictiveProperty;
  * @author Fabian Prasser
  * @author Florian Kohlmayer
  */
-public class AlgorithmFlash extends AbstractAlgorithm {
+public class AlgorithmFlash extends BenchmarkAlgorithm {
 
     /** Configuration for the algorithm's phases. */
     protected final FLASHConfiguration config;
@@ -78,7 +78,7 @@ public class AlgorithmFlash extends AbstractAlgorithm {
     }
 
     @Override
-    public void traverse() {
+    protected void search() {
 
         // Determine configuration for the outer loop
         FLASHPhaseConfiguration outerLoopConfiguration;

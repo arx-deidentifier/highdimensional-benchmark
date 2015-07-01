@@ -26,7 +26,6 @@ import org.deidentifier.arx.BenchmarkSetup.BenchmarkAlgorithm;
 import org.deidentifier.arx.BenchmarkSetup.BenchmarkCriterion;
 import org.deidentifier.arx.BenchmarkSetup.BenchmarkDataset;
 import org.deidentifier.arx.BenchmarkSetup.BenchmarkUtilityMeasure;
-import org.deidentifier.arx.algorithm.AbstractAlgorithm;
 import org.deidentifier.arx.algorithm.AlgorithmFlash;
 import org.deidentifier.arx.algorithm.AlgorithmLightning;
 import org.deidentifier.arx.algorithm.AlgorithmMinimal;
@@ -37,6 +36,8 @@ import org.deidentifier.arx.framework.data.DataManager;
 import org.deidentifier.arx.framework.data.Dictionary;
 import org.deidentifier.arx.framework.lattice.SolutionSpace;
 
+import cern.colt.list.DoubleArrayList;
+
 /**
  * Creates a benchmarking environment consisting of a solution space, node checked, data manager etc. Furthermore,
  * initializes all configuration files
@@ -45,6 +46,35 @@ import org.deidentifier.arx.framework.lattice.SolutionSpace;
  */
 public class BenchmarkEnvironment {
 
+    /**
+     * The result of one benchmark run
+     * @author Fabian Prasser
+     */
+    public static final class BenchmarkRun {
+
+        /** Execution time */
+        public final double          executionTime;
+        /** Information loss */
+        public final double          informationLoss;
+        /** Discovery time */
+        public final double          discoveryTime;
+        /** Track record */
+        public final DoubleArrayList trackRecord;
+
+        /**
+         * Creates a new instance
+         * @param executionTime
+         * @param informationLoss
+         * @param discoveryTime
+         */
+        public BenchmarkRun(double executionTime, double informationLoss, double discoveryTime, DoubleArrayList trackRecord) {
+            this.executionTime = executionTime;
+            this.informationLoss = informationLoss;
+            this.discoveryTime = discoveryTime;
+            this.trackRecord = trackRecord;
+        }
+    }
+    
     /** History size. */
     private static int    CONST_HISTORY_SIZE    = 200;
 
@@ -143,18 +173,18 @@ public class BenchmarkEnvironment {
      * @return
      * @throws IOException 
      */
-    public static double[] getExecutionTimeAndInformationLoss(BenchmarkAlgorithm algorithm,
-                                                              BenchmarkDataset dataset,
-                                                              BenchmarkUtilityMeasure measure,
-                                                              BenchmarkCriterion criterion,
-                                                              int timeLimit,
-                                                              double suppressionLimit) throws IOException {
+    public static BenchmarkRun performRun(BenchmarkAlgorithm algorithm,
+                                          BenchmarkDataset dataset,
+                                          BenchmarkUtilityMeasure measure,
+                                          BenchmarkCriterion criterion,
+                                          int timeLimit,
+                                          double suppressionLimit) throws IOException {
 
         // Create environment
         BenchmarkEnvironment environment = new BenchmarkEnvironment(algorithm, dataset, measure, criterion, suppressionLimit);
 
         // Create an algorithm instance
-        AbstractAlgorithm implementation;
+        org.deidentifier.arx.algorithm.BenchmarkAlgorithm implementation;
         switch (algorithm) {
         case DATAFLY:
         case IGREEDY:
@@ -178,15 +208,19 @@ public class BenchmarkEnvironment {
         long time = System.currentTimeMillis();
         implementation.traverse();
         time = System.currentTimeMillis() - time;
+        double discovery = implementation.getDiscoveryTime();
+        DoubleArrayList trackRecord = implementation.getTrackRecord();
 
         // Return if possible
-        if (algorithm != BenchmarkAlgorithm.DATAFLY && algorithm != BenchmarkAlgorithm.IGREEDY) { 
-            return new double[]{time, (Double) implementation.getGlobalOptimum().getInformationLoss().getValue()}; 
+        if (algorithm != BenchmarkAlgorithm.DATAFLY && algorithm != BenchmarkAlgorithm.IGREEDY) {
+            double iloss = Double.valueOf( implementation.getGlobalOptimum().getInformationLoss().toString());
+            return new BenchmarkRun(time, iloss, discovery, trackRecord); 
         }
 
         // Else repeat to convert
         int[] optimum = implementation.getGlobalOptimum().getGeneralization();
         environment = new BenchmarkEnvironment(BenchmarkAlgorithm.FLASH, dataset, measure, criterion, suppressionLimit);
-        return new double[]{time, (Double) environment.checker.check(environment.solutions.getTransformation(optimum)).informationLoss.getValue()};
+        double iloss = Double.valueOf(environment.checker.check(environment.solutions.getTransformation(optimum)).informationLoss.toString());
+        return new BenchmarkRun(time, iloss, discovery, trackRecord);
     }
 }

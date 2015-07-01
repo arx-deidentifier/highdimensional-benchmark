@@ -95,31 +95,31 @@ public class BenchmarkSetup {
         K_ANONYMITY {
             @Override
             public String toString() {
-                return "k";
+                return "(5)-anonymity";
             }
         },
         L_DIVERSITY {
             @Override
             public String toString() {
-                return "l";
+                return "recursive-(4,3)-diversity";
             }
         },
         T_CLOSENESS {
             @Override
             public String toString() {
-                return "t";
+                return "(0.2)-closeness";
             }
         },
         D_PRESENCE {
             @Override
             public String toString() {
-                return "d";
+                return "(0.05, 0.015)-presence";
             }
         },
         P_UNIQUENESS {
             @Override
             public String toString() {
-                return "r";
+                return "(0.01)-uniqueness";
             }
         }
     }

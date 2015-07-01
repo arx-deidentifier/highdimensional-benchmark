@@ -39,7 +39,7 @@ import de.linearbits.jhpl.PredictiveProperty;
  * @author Johanna Eicher
  * @author Helmut Spengler
  */
-public class AlgorithmLightning extends AbstractAlgorithm{
+public class AlgorithmLightning extends BenchmarkAlgorithm{
 
     /** The maximal size of the priority queue */
     private static final int         MAX_QUEUE_SIZE = 50000;
@@ -84,7 +84,7 @@ public class AlgorithmLightning extends AbstractAlgorithm{
     }
 
     @Override
-    public void traverse() {
+    protected void search() {
         timeStart = System.currentTimeMillis();
         MinMaxPriorityQueue<Long> queue = new MinMaxPriorityQueue<Long>(MAX_QUEUE_SIZE, new Comparator<Long>() {
             @Override
