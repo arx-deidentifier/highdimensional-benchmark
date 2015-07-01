@@ -153,13 +153,9 @@ public class BenchmarkExperiment3 {
             BENCHMARK.addValue(TIME, trackRecord.get(i));
             BENCHMARK.addValue(UTILITY, utility);
             BENCHMARK.addValue(COMPLETE, complete);
-            
-            System.out.println(trackRecord.get(i + 1));
-            
             if (i < trackRecord.size() - 2) {
                 BENCHMARK.addRun(measure.toString(), criterion.toString(), String.valueOf(suppressionLimit), dataset.toString());
             }
         }
-                
     }
 }
