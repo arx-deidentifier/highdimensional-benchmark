@@ -101,6 +101,40 @@ public class BenchmarkEnvironment {
                                           BenchmarkCriterion criterion,
                                           int timeLimit,
                                           double suppressionLimit) throws IOException {
+        
+        // Perform 10 repetitions for p_uniqueness
+        BenchmarkRun result = null;
+        int repetitions = criterion == BenchmarkCriterion.P_UNIQUENESS ? 10 : 1;
+        for (int j=0; j<repetitions; j++) {
+            BenchmarkRun run = doPerformRun(algorithm, dataset, measure, criterion, timeLimit, suppressionLimit);
+            if (result == null) {
+                result = run;
+            } else if (result.informationLoss == -1 && run.informationLoss != -1) {
+                result = run;
+            } else if (result.informationLoss > run.informationLoss) {
+                result = run;
+            }
+        }
+        return result;
+    }
+    
+    /**
+     * Internal method
+     * @param algorithm
+     * @param dataset
+     * @param measure
+     * @param criterion
+     * @param timeLimit
+     * @param suppressionLimit
+     * @return
+     * @throws IOException
+     */
+    private static BenchmarkRun doPerformRun(BenchmarkAlgorithm algorithm,
+                                              BenchmarkDataset dataset,
+                                              BenchmarkUtilityMeasure measure,
+                                              BenchmarkCriterion criterion,
+                                              int timeLimit,
+                                              double suppressionLimit) throws IOException {
 
         // Create environment
         BenchmarkEnvironment environment = new BenchmarkEnvironment(algorithm, dataset, measure, criterion, suppressionLimit);
@@ -142,7 +176,7 @@ public class BenchmarkEnvironment {
             return new BenchmarkRun(time, iloss, discovery, trackRecord); 
         }
 
-        // Else repeat to convert
+        // Else repeat process to convert information loss
         int[] optimum = implementation.getGlobalOptimum().getGeneralization();
         environment = new BenchmarkEnvironment(BenchmarkAlgorithm.FLASH, dataset, measure, criterion, suppressionLimit);
         double iloss = Double.valueOf(environment.checker.check(environment.solutions.getTransformation(optimum)).informationLoss.toString());

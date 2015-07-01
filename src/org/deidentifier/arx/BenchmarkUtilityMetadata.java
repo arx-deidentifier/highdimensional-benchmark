@@ -315,20 +315,26 @@ public class BenchmarkUtilityMetadata {
         // For each transformation
         double min = Double.MAX_VALUE;
         double max = - Double.MAX_VALUE;
-        for (int i = 0; i <= environment.solutions.getTop().getIdentifier(); i++) {
-            Result result = environment.checker.check(environment.solutions.getTransformation(i));
-            if (result.privacyModelFulfilled) {
-                double value = 0d;
-                if (result.informationLoss instanceof ILMultiDimensionalGeometricMean) {
-                    value = Double.valueOf(((ILMultiDimensionalGeometricMean)result.informationLoss).toString());
-                } else {
-                    value = (Double)result.informationLoss.getValue();
+        
+        // Repeat 10 times for p_uniqueness
+        int repetitions = criterion == BenchmarkCriterion.P_UNIQUENESS ? 10 : 1;
+        for (int j=0; j<repetitions; j++) {
+            for (int i = 0; i <= environment.solutions.getTop().getIdentifier(); i++) {
+                Result result = environment.checker.check(environment.solutions.getTransformation(i));
+                if (result.privacyModelFulfilled) {
+                    double value = 0d;
+                    if (result.informationLoss instanceof ILMultiDimensionalGeometricMean) {
+                        value = Double.valueOf(((ILMultiDimensionalGeometricMean)result.informationLoss).toString());
+                    } else {
+                        value = (Double)result.informationLoss.getValue();
+                    }
+                    min = Math.min(min, value);
+                    max = Math.max(max, value);
                 }
-                min = Math.min(min, value);
-                max = Math.max(max, value);
             }
         }
 
+        // Print
         System.out.print("list.add(new UtilityMetadataEntry(");
         System.out.print("BenchmarkDataset." + dataset.name() + ", ");
         System.out.print("BenchmarkUtilityMeasure." + measure.name() + ", ");
