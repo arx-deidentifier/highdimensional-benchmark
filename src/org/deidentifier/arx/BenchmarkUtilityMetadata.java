@@ -238,6 +238,16 @@ public class BenchmarkUtilityMetadata {
         new UtilityMetadataEntry(BenchmarkDataset.CUP, BenchmarkUtilityMeasure.LOSS, BenchmarkCriterion.D_PRESENCE, 0.1, 0.736121634703844, 0.9834046324796519);
         new UtilityMetadataEntry(BenchmarkDataset.FARS, BenchmarkUtilityMeasure.LOSS, BenchmarkCriterion.D_PRESENCE, 0.1, 0.6824600738509348, 0.9167747433398798);
         new UtilityMetadataEntry(BenchmarkDataset.ATUS, BenchmarkUtilityMeasure.LOSS, BenchmarkCriterion.D_PRESENCE, 0.1, 0.4229456039455204, 0.9173399859255569);
+        new UtilityMetadataEntry(BenchmarkDataset.IHIS, BenchmarkUtilityMeasure.LOSS, BenchmarkCriterion.D_PRESENCE, 0.1, 0.3101938163248257, 0.9011596499023402);
+        new UtilityMetadataEntry(BenchmarkDataset.ADULT, BenchmarkUtilityMeasure.LOSS, BenchmarkCriterion.P_UNIQUENESS, 0.1, 0.0049634194198648895, 0.9078404195963321);
+        new UtilityMetadataEntry(BenchmarkDataset.CUP, BenchmarkUtilityMeasure.LOSS, BenchmarkCriterion.P_UNIQUENESS, 0.1, 0.00710363579774187, 0.9834001135879431);
+        new UtilityMetadataEntry(BenchmarkDataset.FARS, BenchmarkUtilityMeasure.LOSS, BenchmarkCriterion.P_UNIQUENESS, 0.1, 0.018461399150697666, 0.9168296054187155);
+        new UtilityMetadataEntry(BenchmarkDataset.ATUS, BenchmarkUtilityMeasure.LOSS, BenchmarkCriterion.P_UNIQUENESS, 0.1, 0.0, 0.9175411555360957);
+        new UtilityMetadataEntry(BenchmarkDataset.IHIS, BenchmarkUtilityMeasure.LOSS, BenchmarkCriterion.P_UNIQUENESS, 0.1, 0.0, 0.9011596499023402);
+        new UtilityMetadataEntry(BenchmarkDataset.ADULT, BenchmarkUtilityMeasure.LOSS, BenchmarkCriterion.K_ANONYMITY, 1.0, 0.16273358184004305, 0.9078404195963321);
+        new UtilityMetadataEntry(BenchmarkDataset.CUP, BenchmarkUtilityMeasure.LOSS, BenchmarkCriterion.K_ANONYMITY, 1.0, 0.1287966152224742, 0.9999999999999987);
+        new UtilityMetadataEntry(BenchmarkDataset.FARS, BenchmarkUtilityMeasure.LOSS, BenchmarkCriterion.K_ANONYMITY, 1.0, 0.10147063173897553, 0.9168296054187155);
+        new UtilityMetadataEntry(BenchmarkDataset.ATUS, BenchmarkUtilityMeasure.LOSS, BenchmarkCriterion.K_ANONYMITY, 1.0, 0.04559864251535917, 0.9175411555360957);
     }
 
     /**
