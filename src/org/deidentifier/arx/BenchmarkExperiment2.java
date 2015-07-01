@@ -163,10 +163,12 @@ public class BenchmarkExperiment2 {
         // Measure quality of own when executed with flash's timeLimit and discovery time
         BenchmarkRun run = BenchmarkEnvironment.performRun(BenchmarkAlgorithm.LIGHTNING, dataset, measure, criterion, (int)flash, suppressionLimit);
         double utility = run.informationLoss;
-        double min = BenchmarkUtilityMetadata.getMinimalAndMaximalInformationLoss(dataset, measure, criterion, suppressionLimit)[0];
-        double max = BenchmarkUtilityMetadata.getMinimalAndMaximalInformationLoss(dataset, measure, criterion, suppressionLimit)[1];
-        utility = utility - min;
-        utility /= max-min;
+        if (utility != -1) {
+            double min = BenchmarkUtilityMetadata.getMinimalAndMaximalInformationLoss(dataset, measure, criterion, suppressionLimit)[0];
+            double max = BenchmarkUtilityMetadata.getMinimalAndMaximalInformationLoss(dataset, measure, criterion, suppressionLimit)[1];
+            utility = utility - min;
+            utility /= max-min;
+        }
         BENCHMARK.addValue(UTILITY, utility);
         BENCHMARK.addValue(DISCOVERY, run.discoveryTime);        
     }

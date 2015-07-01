@@ -54,7 +54,7 @@ public class BenchmarkEnvironment {
 
         /** Execution time */
         public final double          executionTime;
-        /** Information loss */
+        /** Information loss: -1 means "no result" */
         public final double          informationLoss;
         /** Discovery time */
         public final double          discoveryTime;
@@ -212,8 +212,11 @@ public class BenchmarkEnvironment {
         DoubleArrayList trackRecord = implementation.getTrackRecord();
 
         // Return if possible
-        if (algorithm != BenchmarkAlgorithm.DATAFLY && algorithm != BenchmarkAlgorithm.IGREEDY) {
-            double iloss = Double.valueOf( implementation.getGlobalOptimum().getInformationLoss().toString());
+        if ((algorithm != BenchmarkAlgorithm.DATAFLY && algorithm != BenchmarkAlgorithm.IGREEDY) || implementation.getGlobalOptimum() == null) {
+            double iloss = -1d;
+            if (implementation.getGlobalOptimum() != null) {
+                iloss = Double.valueOf( implementation.getGlobalOptimum().getInformationLoss().toString());
+            }
             return new BenchmarkRun(time, iloss, discovery, trackRecord); 
         }
 
