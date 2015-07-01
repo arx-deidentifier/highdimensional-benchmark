@@ -315,7 +315,7 @@ public class BenchmarkUtilityMetadata {
         // For each transformation
         double min = Double.MAX_VALUE;
         double max = - Double.MAX_VALUE;
-        for (int i = 0; i < environment.solutions.getTop().getIdentifier(); i++) {
+        for (int i = 0; i <= environment.solutions.getTop().getIdentifier(); i++) {
             Result result = environment.checker.check(environment.solutions.getTransformation(i));
             if (result.privacyModelFulfilled) {
                 double value = 0d;
@@ -346,13 +346,13 @@ public class BenchmarkUtilityMetadata {
         
         double[] values = computeMinimalAndMaximalInformationLoss(dataset, measure, criterion, suppression);
         
-        System.out.print("new UtilityMetadataEntry(");
+        System.out.print("list.add(new UtilityMetadataEntry(");
         System.out.print("BenchmarkDataset." + dataset.name()+", ");
         System.out.print("BenchmarkUtilityMeasure." + measure.name()+", ");
         System.out.print("BenchmarkCriterion." + criterion.name()+", ");
         System.out.print(suppression+", ");
         System.out.print(values[0]+", ");
-        System.out.print(values[1]+");\n");
+        System.out.print(values[1]+"));\n");
     }
 
     /**

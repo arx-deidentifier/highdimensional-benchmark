@@ -59,13 +59,13 @@ public abstract class BenchmarkAlgorithm extends AbstractAlgorithm {
         long previousId = getGlobalOptimum() == null ? -1 : getGlobalOptimum().getIdentifier();
         super.trackOptimum(arg0);
         long newId = getGlobalOptimum() == null ? -1 : getGlobalOptimum().getIdentifier();
-        if (previousId != newId) {
+        if ((this instanceof AlgorithmLightning) && previousId != newId) {
             double utility = Double.valueOf(getGlobalOptimum().getInformationLoss().toString());
-            if (utility != lastUtility) {
+            if (utility != this.lastUtility) {
                 this.discovery = (int)(System.currentTimeMillis() - time);
                 this.trackRecord.add(this.discovery);
                 this.trackRecord.add(utility);
-                lastUtility = utility;
+                this.lastUtility = utility;
             }
         }
     }
