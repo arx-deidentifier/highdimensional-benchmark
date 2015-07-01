@@ -33,14 +33,17 @@ import cern.colt.list.DoubleArrayList;
 public abstract class BenchmarkAlgorithm extends AbstractAlgorithm {
 
     /** Start time of the search process */
-    private long time      = 0;
+    private long            time        = 0;
 
     /** Time at which the optimum was discovered */
-    private int discovery = 0;
-    
-    /** The track record*/
+    private int             discovery   = 0;
+
+    /** The track record */
     private DoubleArrayList trackRecord = new DoubleArrayList();
-    
+
+    /** Optimal utility */
+    private double          lastUtility     = 0d;
+
     /**
      * Creates a new instance
      * @param arg0
@@ -57,9 +60,13 @@ public abstract class BenchmarkAlgorithm extends AbstractAlgorithm {
         super.trackOptimum(arg0);
         long newId = getGlobalOptimum() == null ? -1 : getGlobalOptimum().getIdentifier();
         if (previousId != newId) {
-            this.discovery = (int)(System.currentTimeMillis() - time);
-            this.trackRecord.add(this.discovery);
-            this.trackRecord.add(Double.valueOf(getGlobalOptimum().getInformationLoss().toString()));
+            double utility = Double.valueOf(getGlobalOptimum().getInformationLoss().toString());
+            if (utility != lastUtility) {
+                this.discovery = (int)(System.currentTimeMillis() - time);
+                this.trackRecord.add(this.discovery);
+                this.trackRecord.add(utility);
+                lastUtility = utility;
+            }
         }
     }
 
