@@ -113,7 +113,6 @@ public class BenchmarkAnalysis3 {
         
         List<Point3D> list = new ArrayList<Point3D>();
         for (Point3D point : series.getData()) {
-            
             list.add(new Point3D(String.valueOf(Double.valueOf(point.x) / 1000d),
                                  point.y.replace("_", "-"),
                                  String.valueOf(Double.valueOf(point.z) * 100d)));
@@ -141,6 +140,10 @@ public class BenchmarkAnalysis3 {
             data.get(point.y).put(x, y);
             if (!xvalues.contains(x)) {
                 xvalues.add(x);
+            }
+            // Articial steps, shifted by 1/10 ms
+            if (x > 0 && !xvalues.contains(x - 0.1d)) {
+                xvalues.add(x - 0.1d);
             }
         }
         
