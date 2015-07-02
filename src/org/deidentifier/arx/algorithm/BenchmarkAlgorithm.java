@@ -89,7 +89,12 @@ public abstract class BenchmarkAlgorithm extends AbstractAlgorithm {
         if ((this instanceof AlgorithmLightning) && previousId != newId) {
             double utility = Double.valueOf(getGlobalOptimum().getInformationLoss().toString());
             if (utility != this.lastUtility) {
-                this.discovery = (int)(System.currentTimeMillis() - time);
+                int localdiscovery = (int)(System.currentTimeMillis() - time);
+                // Sometimes, there seem to be problems with milliseconds resolution
+                if (localdiscovery == discovery) { 
+                    localdiscovery++;
+                }
+                this.discovery = localdiscovery;
                 this.trackRecord.add(this.discovery);
                 this.trackRecord.add(utility);
                 this.lastUtility = utility;
