@@ -17,16 +17,18 @@
  * limitations under the License.
  */
 
-package org.deidentifier.arx;
+package org.deidentifier.arx.benchmark;
 
 import java.io.File;
 import java.io.IOException;
 
+import org.deidentifier.arx.BenchmarkEnvironment;
 import org.deidentifier.arx.BenchmarkEnvironment.BenchmarkRun;
-import org.deidentifier.arx.BenchmarkSetup.BenchmarkAlgorithm;
-import org.deidentifier.arx.BenchmarkSetup.BenchmarkCriterion;
-import org.deidentifier.arx.BenchmarkSetup.BenchmarkDataset;
-import org.deidentifier.arx.BenchmarkSetup.BenchmarkUtilityMeasure;
+import org.deidentifier.arx.benchmark.BenchmarkSetup.BenchmarkAlgorithm;
+import org.deidentifier.arx.benchmark.BenchmarkSetup.BenchmarkCriterion;
+import org.deidentifier.arx.benchmark.BenchmarkSetup.BenchmarkDataset;
+import org.deidentifier.arx.benchmark.BenchmarkSetup.BenchmarkUtilityMeasure;
+import org.deidentifier.arx.BenchmarkMetadata;
 
 import de.linearbits.subframe.Benchmark;
 import de.linearbits.subframe.analyzer.ValueBuffer;
@@ -91,7 +93,7 @@ public class BenchmarkExperiment2 {
      * Returns all criteria for this experiment
      * @return
      */
-    private static BenchmarkCriterion[] getCriteria() {
+    public static BenchmarkCriterion[] getCriteria() {
         return new BenchmarkCriterion[]{
             BenchmarkCriterion.K_ANONYMITY,
             BenchmarkCriterion.P_UNIQUENESS
@@ -101,7 +103,7 @@ public class BenchmarkExperiment2 {
      * Returns all datasets for this experiment
      * @return
      */
-    private static BenchmarkDataset[] getDatasets() {
+    public static BenchmarkDataset[] getDatasets() {
         return new BenchmarkDataset[] { 
                 BenchmarkDataset.ADULT,
                 BenchmarkDataset.CUP,
@@ -114,7 +116,7 @@ public class BenchmarkExperiment2 {
      * Returns all suppression limits for this experiment
      * @return
      */
-    private static double[] getSuppressionLimits() {
+    public static double[] getSuppressionLimits() {
         return new double[]{0d, 1d};
     }
 
@@ -122,7 +124,7 @@ public class BenchmarkExperiment2 {
      * Returns all utility measures for this experiment
      * @return
      */
-    private static BenchmarkUtilityMeasure[] getUtilityMeasures() {
+    public static BenchmarkUtilityMeasure[] getUtilityMeasures() {
         return new BenchmarkUtilityMeasure[] { 
                 BenchmarkUtilityMeasure.AECS,
                 BenchmarkUtilityMeasure.LOSS
@@ -164,8 +166,8 @@ public class BenchmarkExperiment2 {
         BenchmarkRun run = BenchmarkEnvironment.performRun(BenchmarkAlgorithm.LIGHTNING, dataset, measure, criterion, (int)flash, suppressionLimit);
         double utility = run.informationLoss;
         if (utility != -1) {
-            double min = BenchmarkUtilityMetadata.getMinimalAndMaximalInformationLoss(dataset, measure, criterion, suppressionLimit)[0];
-            double max = BenchmarkUtilityMetadata.getMinimalAndMaximalInformationLoss(dataset, measure, criterion, suppressionLimit)[1];
+            double min = BenchmarkMetadata.getMinimalAndMaximalInformationLoss(dataset, measure, criterion, suppressionLimit)[0];
+            double max = BenchmarkMetadata.getMinimalAndMaximalInformationLoss(dataset, measure, criterion, suppressionLimit)[1];
             utility = utility - min;
             utility /= max-min;
         }

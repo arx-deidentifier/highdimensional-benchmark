@@ -17,16 +17,17 @@
  * limitations under the License.
  */
 
-package org.deidentifier.arx;
+package org.deidentifier.arx.benchmark;
 
 import java.io.File;
 import java.io.IOException;
 
+import org.deidentifier.arx.BenchmarkEnvironment;
 import org.deidentifier.arx.BenchmarkEnvironment.BenchmarkRun;
-import org.deidentifier.arx.BenchmarkSetup.BenchmarkAlgorithm;
-import org.deidentifier.arx.BenchmarkSetup.BenchmarkCriterion;
-import org.deidentifier.arx.BenchmarkSetup.BenchmarkDataset;
-import org.deidentifier.arx.BenchmarkSetup.BenchmarkUtilityMeasure;
+import org.deidentifier.arx.benchmark.BenchmarkSetup.BenchmarkAlgorithm;
+import org.deidentifier.arx.benchmark.BenchmarkSetup.BenchmarkCriterion;
+import org.deidentifier.arx.benchmark.BenchmarkSetup.BenchmarkDataset;
+import org.deidentifier.arx.benchmark.BenchmarkSetup.BenchmarkUtilityMeasure;
 
 import cern.colt.list.DoubleArrayList;
 import de.linearbits.subframe.Benchmark;
@@ -87,7 +88,7 @@ public class BenchmarkExperiment3 {
      * Returns all criteria for this experiment
      * @return
      */
-    private static BenchmarkCriterion[] getCriteria() {
+    public static BenchmarkCriterion[] getCriteria() {
         return new BenchmarkCriterion[]{
             BenchmarkCriterion.K_ANONYMITY,
             BenchmarkCriterion.P_UNIQUENESS
@@ -97,7 +98,7 @@ public class BenchmarkExperiment3 {
      * Returns all datasets for this experiment
      * @return
      */
-    private static BenchmarkDataset[] getDatasets() {
+    public static BenchmarkDataset[] getDatasets() {
         return new BenchmarkDataset[] { 
                 BenchmarkDataset.SS13ACS_15,
                 BenchmarkDataset.SS13ACS_20,
@@ -109,7 +110,7 @@ public class BenchmarkExperiment3 {
      * Returns all suppression limits for this experiment
      * @return
      */
-    private static double[] getSuppressionLimits() {
+    public static double[] getSuppressionLimits() {
         return new double[]{0d, 1d};
     }
 
@@ -117,7 +118,7 @@ public class BenchmarkExperiment3 {
      * Returns all utility measures for this experiment
      * @return
      */
-    private static BenchmarkUtilityMeasure[] getUtilityMeasures() {
+    public static BenchmarkUtilityMeasure[] getUtilityMeasures() {
         return new BenchmarkUtilityMeasure[] { 
                 BenchmarkUtilityMeasure.AECS,
                 BenchmarkUtilityMeasure.LOSS

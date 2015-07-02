@@ -54,21 +54,21 @@
             <fileset dir="build/lib" defaultexcludes="no" />
             <zipfileset src="build/extLibs/lib.jar" excludes="META-INF/*.RSA,META-INF/*.SF,META-INF/*.DSA" />
             <manifest>
-                <attribute name="Main-Class" value="org.deidentifier.arx.BenchmarkExperiment1" />
+                <attribute name="Main-Class" value="org.deidentifier.arx.benchmark.BenchmarkExperiment1" />
             </manifest>
         </jar>
         <jar destfile="jars/experiment-2-v${version}.jar">
             <fileset dir="build/lib" defaultexcludes="no" />
             <zipfileset src="build/extLibs/lib.jar" excludes="META-INF/*.RSA,META-INF/*.SF,META-INF/*.DSA" />
             <manifest>
-                <attribute name="Main-Class" value="org.deidentifier.arx.BenchmarkExperiment2" />
+                <attribute name="Main-Class" value="org.deidentifier.arx.benchmark.BenchmarkExperiment2" />
             </manifest>
         </jar>
         <jar destfile="jars/experiment-3-v${version}.jar">
             <fileset dir="build/lib" defaultexcludes="no" />
             <zipfileset src="build/extLibs/lib.jar" excludes="META-INF/*.RSA,META-INF/*.SF,META-INF/*.DSA" />
             <manifest>
-                <attribute name="Main-Class" value="org.deidentifier.arx.BenchmarkExperiment3" />
+                <attribute name="Main-Class" value="org.deidentifier.arx.benchmark.BenchmarkExperiment3" />
             </manifest>
         </jar>
     </target>

@@ -17,10 +17,15 @@
  * limitations under the License.
  */
 
-package org.deidentifier.arx;
+package org.deidentifier.arx.benchmark;
 
 import java.io.IOException;
 
+import org.deidentifier.arx.ARXConfiguration;
+import org.deidentifier.arx.ARXPopulationModel;
+import org.deidentifier.arx.AttributeType;
+import org.deidentifier.arx.Data;
+import org.deidentifier.arx.DataSubset;
 import org.deidentifier.arx.ARXPopulationModel.Region;
 import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.criteria.DPresence;
