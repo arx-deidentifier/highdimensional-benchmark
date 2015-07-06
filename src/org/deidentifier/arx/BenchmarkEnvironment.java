@@ -199,7 +199,9 @@ public class BenchmarkEnvironment {
                     }
                 }
             }
-            iloss = Double.valueOf(result.informationLoss.toString());
+            if (result != null) {
+                iloss = Double.valueOf(result.informationLoss.toString());
+            }
         }
         return new BenchmarkRun(time, iloss, discovery, trackRecord);
     }
