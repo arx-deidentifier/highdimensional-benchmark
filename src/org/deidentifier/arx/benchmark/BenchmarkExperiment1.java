@@ -156,10 +156,14 @@ public class BenchmarkExperiment1 {
         // Normalize
         double min = BenchmarkMetadata.getMinimalAndMaximalInformationLoss(dataset, measure, criterion, suppressionLimit)[0];
         double max = BenchmarkMetadata.getMinimalAndMaximalInformationLoss(dataset, measure, criterion, suppressionLimit)[1];
-        value = value - min;
-        value /= max-min;
+        double result = value - min;
+        result /= max-min;
+
+        if (result < 0) {
+            System.out.println("Iloss out of bounds for " + algorithm + "/" + dataset + "/" + measure + "/" + criterion + ": " + value);
+        }
         
         // Add
-        BENCHMARK.addValue(benchmarkMeasure, value);
+        BENCHMARK.addValue(benchmarkMeasure, result);
     }
 }

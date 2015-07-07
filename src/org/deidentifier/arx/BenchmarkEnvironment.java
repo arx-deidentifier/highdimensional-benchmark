@@ -120,6 +120,7 @@ public class BenchmarkEnvironment {
                 result = run;
             }
         }
+        
         return result;
     }
     

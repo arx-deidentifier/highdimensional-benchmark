@@ -168,8 +168,13 @@ public class BenchmarkExperiment2 {
         if (utility != -1) {
             double min = BenchmarkMetadata.getMinimalAndMaximalInformationLoss(dataset, measure, criterion, suppressionLimit)[0];
             double max = BenchmarkMetadata.getMinimalAndMaximalInformationLoss(dataset, measure, criterion, suppressionLimit)[1];
+            double old = utility;
             utility = utility - min;
             utility /= max-min;
+            if (utility < 0) {
+                System.out.println("Iloss out of bounds for " + BenchmarkAlgorithm.LIGHTNING + "/" + dataset + "/" + measure + "/" + criterion + ": " + old);
+            }
+            
         }
         BENCHMARK.addValue(UTILITY, utility);
         BENCHMARK.addValue(DISCOVERY, run.discoveryTime);        
