@@ -23,6 +23,7 @@ import java.io.IOException;
 
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.ARXPopulationModel;
+import org.deidentifier.arx.ARXSolverConfiguration;
 import org.deidentifier.arx.AttributeType;
 import org.deidentifier.arx.Data;
 import org.deidentifier.arx.DataSubset;
@@ -47,7 +48,7 @@ import org.deidentifier.arx.metric.v2.MetricIGreedy;
  * @author Florian Kohlmayer
  */
 public class BenchmarkSetup {
-
+    
     public static enum BenchmarkAlgorithm {
         FLASH {
             @Override
@@ -80,7 +81,7 @@ public class BenchmarkSetup {
             }
         }
     }
-    
+
     public static enum BenchmarkCriterion {
         K_ANONYMITY {
             @Override
@@ -113,7 +114,7 @@ public class BenchmarkSetup {
             }
         }
     }
-
+    
     public static enum BenchmarkDataset {
         ADULT {
             @Override
@@ -186,6 +187,8 @@ public class BenchmarkSetup {
         },
     }
 
+    private static final double[][] SOLVER_START_VALUES = getSolverStartValues();
+
     /**
      * Returns a configuration for the ARX framework
      * @param dataset
@@ -220,7 +223,7 @@ public class BenchmarkSetup {
             config.addCriterion(new HierarchicalDistanceTCloseness(sensitive, 0.2d, getHierarchy(dataset, sensitive)));
             break;
         case P_UNIQUENESS:
-            config.addCriterion(new PopulationUniqueness(0.01d, ARXPopulationModel.create(Region.USA)));
+            config.addCriterion(new PopulationUniqueness(0.01d, ARXPopulationModel.create(Region.USA), ARXSolverConfiguration.create().startValues(SOLVER_START_VALUES)));
             break;
         default:
             throw new RuntimeException("Invalid criterion");
@@ -240,6 +243,7 @@ public class BenchmarkSetup {
 
         return config;
     }
+    
     /**
      * Configures and returns the dataset 
      * @param dataset
@@ -321,7 +325,7 @@ public class BenchmarkSetup {
 
         return data;
     }
-
+    
     /**
      * Returns the generalization hierarchy for the dataset and attribute
      * @param dataset
@@ -545,7 +549,7 @@ public class BenchmarkSetup {
             throw new RuntimeException("Invalid dataset");
         }
     }
-    
+
     /**
      * Returns the sensitive attribute for the dataset
      * @param dataset
@@ -566,5 +570,20 @@ public class BenchmarkSetup {
         default:
             throw new RuntimeException("Invalid dataset");
         }
+    }
+    
+    /**
+     * Creates start values for the solver
+     * @return
+     */
+    private static double[][] getSolverStartValues() {
+        double[][] result = new double[400][];
+        int index = 0;
+        for (double d1 = -1d; d1 <= +1d; d1 += 0.1d) {
+            for (double d2 = -1d; d2 <= +1d; d2 += 0.1d) {
+                result[index++] = new double[] { d1, d2 };
+            }
+        }
+        return result;
     }
 }

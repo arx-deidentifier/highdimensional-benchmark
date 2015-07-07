@@ -32,7 +32,6 @@ import org.deidentifier.arx.benchmark.BenchmarkSetup.BenchmarkCriterion;
 import org.deidentifier.arx.benchmark.BenchmarkSetup.BenchmarkDataset;
 import org.deidentifier.arx.benchmark.BenchmarkSetup.BenchmarkUtilityMeasure;
 import org.deidentifier.arx.framework.check.NodeChecker;
-import org.deidentifier.arx.framework.check.NodeChecker.Result;
 import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction;
 import org.deidentifier.arx.framework.data.DataManager;
 import org.deidentifier.arx.framework.data.Dictionary;
@@ -86,44 +85,6 @@ public class BenchmarkEnvironment {
     /** Snapshot size snapshot. */
     private static double CONST_SNAPSHOT_SIZE_2 = 0.8d;
 
-    /** Repetitions for uniqueness criterion. */
-    private static int CONST_UNIQUENESS_REPETITIONS = 10;
-    
-    /**
-     * Returns the resulting utility value as a double
-     * @param algorithm
-     * @param dataset
-     * @param measure
-     * @param criterion
-     * @param timeLimit
-     * @param suppressionLimit
-     * @return
-     * @throws IOException 
-     */
-    public static BenchmarkRun performRun(BenchmarkAlgorithm algorithm,
-                                          BenchmarkDataset dataset,
-                                          BenchmarkUtilityMeasure measure,
-                                          BenchmarkCriterion criterion,
-                                          int timeLimit,
-                                          double suppressionLimit) throws IOException {
-        
-        // Perform 10 repetitions for p_uniqueness
-        BenchmarkRun result = null;
-        int repetitions = criterion == BenchmarkCriterion.P_UNIQUENESS ? CONST_UNIQUENESS_REPETITIONS : 1;
-        for (int j=0; j<repetitions; j++) {
-            BenchmarkRun run = doPerformRun(algorithm, dataset, measure, criterion, timeLimit, suppressionLimit);
-            if (result == null) {
-                result = run;
-            } else if (result.informationLoss == -1 && run.informationLoss != -1) {
-                result = run;
-            } else if (result.informationLoss > run.informationLoss) {
-                result = run;
-            }
-        }
-        
-        return result;
-    }
-    
     /**
      * Internal method
      * @param algorithm
@@ -135,12 +96,12 @@ public class BenchmarkEnvironment {
      * @return
      * @throws IOException
      */
-    private static BenchmarkRun doPerformRun(BenchmarkAlgorithm algorithm,
-                                              BenchmarkDataset dataset,
-                                              BenchmarkUtilityMeasure measure,
-                                              BenchmarkCriterion criterion,
-                                              int timeLimit,
-                                              double suppressionLimit) throws IOException {
+    public static BenchmarkRun performRun(BenchmarkAlgorithm algorithm,
+                                          BenchmarkDataset dataset,
+                                          BenchmarkUtilityMeasure measure,
+                                          BenchmarkCriterion criterion,
+                                          int timeLimit,
+                                          double suppressionLimit) throws IOException {
 
         // Create environment
         BenchmarkEnvironment environment = new BenchmarkEnvironment(algorithm, dataset, measure, criterion, suppressionLimit);
@@ -185,24 +146,9 @@ public class BenchmarkEnvironment {
         // Else repeat process to convert information loss
         int[] optimum = implementation.getGlobalOptimum().getGeneralization();
         environment = new BenchmarkEnvironment(BenchmarkAlgorithm.FLASH, dataset, measure, criterion, suppressionLimit);
-        
         double iloss = -1d;
         if (implementation.getGlobalOptimum() != null) {
-            
-            Result result = null;
-            for (int j = 0; j < CONST_UNIQUENESS_REPETITIONS; j++) {
-                Result run = environment.checker.check(environment.solutions.getTransformation(optimum));
-                if (run.privacyModelFulfilled) {
-                    if (result == null) {
-                        result = run;
-                    } else if (Double.valueOf(run.informationLoss.toString()) < Double.valueOf(result.informationLoss.toString())) {
-                        result = run;
-                    }
-                }
-            }
-            if (result != null) {
-                iloss = Double.valueOf(result.informationLoss.toString());
-            }
+            iloss = Double.valueOf(environment.checker.check(environment.solutions.getTransformation(optimum)).informationLoss.toString());
         }
         return new BenchmarkRun(time, iloss, discovery, trackRecord);
     }
