@@ -577,10 +577,10 @@ public class BenchmarkSetup {
      * @return
      */
     private static double[][] getSolverStartValues() {
-        double[][] result = new double[400][];
+        double[][] result = new double[121][];
         int index = 0;
-        for (double d1 = -1d; d1 <= +1d; d1 += 0.1d) {
-            for (double d2 = -1d; d2 <= +1d; d2 += 0.1d) {
+        for (double d1 = -1d; d1 <= +1d; d1 += 0.2d) {
+            for (double d2 = -1d; d2 <= +1d; d2 += 0.2d) {
                 result[index++] = new double[] { d1, d2 };
             }
         }

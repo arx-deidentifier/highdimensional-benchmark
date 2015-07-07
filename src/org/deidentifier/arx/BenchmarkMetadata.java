@@ -336,21 +336,17 @@ public class BenchmarkMetadata {
         double min = Double.MAX_VALUE;
         double max = - Double.MAX_VALUE;
         
-        // Repeat 10 times for p_uniqueness
-        int repetitions = criterion == BenchmarkCriterion.P_UNIQUENESS ? 10 : 1;
-        for (int j=0; j<repetitions; j++) {
-            for (int i = 0; i <= environment.solutions.getTop().getIdentifier(); i++) {
-                Result result = environment.checker.check(environment.solutions.getTransformation(i));
-                if (result.privacyModelFulfilled) {
-                    double value = 0d;
-                    if (result.informationLoss instanceof ILMultiDimensionalGeometricMean) {
-                        value = Double.valueOf(((ILMultiDimensionalGeometricMean)result.informationLoss).toString());
-                    } else {
-                        value = (Double)result.informationLoss.getValue();
-                    }
-                    min = Math.min(min, value);
-                    max = Math.max(max, value);
+        for (int i = 0; i <= environment.solutions.getTop().getIdentifier(); i++) {
+            Result result = environment.checker.check(environment.solutions.getTransformation(i));
+            if (result.privacyModelFulfilled) {
+                double value = 0d;
+                if (result.informationLoss instanceof ILMultiDimensionalGeometricMean) {
+                    value = Double.valueOf(((ILMultiDimensionalGeometricMean) result.informationLoss).toString());
+                } else {
+                    value = (Double) result.informationLoss.getValue();
                 }
+                min = Math.min(min, value);
+                max = Math.max(max, value);
             }
         }
 
@@ -370,10 +366,10 @@ public class BenchmarkMetadata {
      */
     private static BenchmarkCriterion[] getCriteria() {
         return new BenchmarkCriterion[]{
-            BenchmarkCriterion.K_ANONYMITY,
-            BenchmarkCriterion.L_DIVERSITY,
-            BenchmarkCriterion.T_CLOSENESS,
-            BenchmarkCriterion.D_PRESENCE,
+//            BenchmarkCriterion.K_ANONYMITY,
+//            BenchmarkCriterion.L_DIVERSITY,
+//            BenchmarkCriterion.T_CLOSENESS,
+//            BenchmarkCriterion.D_PRESENCE,
             BenchmarkCriterion.P_UNIQUENESS
         };
     }
