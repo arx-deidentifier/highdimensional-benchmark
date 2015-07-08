@@ -141,11 +141,13 @@ public class BenchmarkMetadata {
         list.add(new UtilityMetadataEntry(BenchmarkDataset.FARS, BenchmarkUtilityMeasure.AECS, BenchmarkCriterion.D_PRESENCE, 0.0, 152.92424242424244, 10093.0));
         list.add(new UtilityMetadataEntry(BenchmarkDataset.ATUS, BenchmarkUtilityMeasure.AECS, BenchmarkCriterion.D_PRESENCE, 0.0, 162.42469879518072, 53925.0));
         list.add(new UtilityMetadataEntry(BenchmarkDataset.IHIS, BenchmarkUtilityMeasure.AECS, BenchmarkCriterion.D_PRESENCE, 0.0, 86.73691860465117, 119350.0));
+
         list.add(new UtilityMetadataEntry(BenchmarkDataset.ADULT, BenchmarkUtilityMeasure.AECS, BenchmarkCriterion.P_UNIQUENESS, 0.0, 2.571136305515301, 30162.0));
-        list.add(new UtilityMetadataEntry(BenchmarkDataset.CUP, BenchmarkUtilityMeasure.AECS, BenchmarkCriterion.P_UNIQUENESS, 0.0, 1.0042264222623232, 63441.0));
-        list.add(new UtilityMetadataEntry(BenchmarkDataset.FARS, BenchmarkUtilityMeasure.AECS, BenchmarkCriterion.P_UNIQUENESS, 0.0, 3.1120737497687614, 100937.0));
+        list.add(new UtilityMetadataEntry(BenchmarkDataset.CUP, BenchmarkUtilityMeasure.AECS, BenchmarkCriterion.P_UNIQUENESS, 0.0, 1.0078798951465566, 63441.0));
+        list.add(new UtilityMetadataEntry(BenchmarkDataset.FARS, BenchmarkUtilityMeasure.AECS, BenchmarkCriterion.P_UNIQUENESS, 0.0, 3.42310170583647, 100937.0));
         list.add(new UtilityMetadataEntry(BenchmarkDataset.ATUS, BenchmarkUtilityMeasure.AECS, BenchmarkCriterion.P_UNIQUENESS, 0.0, 11.034438305709024, 539253.0));
         list.add(new UtilityMetadataEntry(BenchmarkDataset.IHIS, BenchmarkUtilityMeasure.AECS, BenchmarkCriterion.P_UNIQUENESS, 0.0, 2.9739015164728926, 1193504.0));
+        
         list.add(new UtilityMetadataEntry(BenchmarkDataset.ADULT, BenchmarkUtilityMeasure.AECS, BenchmarkCriterion.K_ANONYMITY, 0.1, 26.597883597883598, 30162.0));
         list.add(new UtilityMetadataEntry(BenchmarkDataset.CUP, BenchmarkUtilityMeasure.AECS, BenchmarkCriterion.K_ANONYMITY, 0.1, 16.57721452835119, 63441.0));
         list.add(new UtilityMetadataEntry(BenchmarkDataset.FARS, BenchmarkUtilityMeasure.AECS, BenchmarkCriterion.K_ANONYMITY, 0.1, 25.65108005082592, 100937.0));
@@ -166,11 +168,13 @@ public class BenchmarkMetadata {
         list.add(new UtilityMetadataEntry(BenchmarkDataset.FARS, BenchmarkUtilityMeasure.AECS, BenchmarkCriterion.D_PRESENCE, 0.1, 63.879746835443036, 10093.0));
         list.add(new UtilityMetadataEntry(BenchmarkDataset.ATUS, BenchmarkUtilityMeasure.AECS, BenchmarkCriterion.D_PRESENCE, 0.1, 82.07762557077625, 53925.0));
         list.add(new UtilityMetadataEntry(BenchmarkDataset.IHIS, BenchmarkUtilityMeasure.AECS, BenchmarkCriterion.D_PRESENCE, 0.1, 27.411575562700964, 119350.0));
+
         list.add(new UtilityMetadataEntry(BenchmarkDataset.ADULT, BenchmarkUtilityMeasure.AECS, BenchmarkCriterion.P_UNIQUENESS, 0.1, 2.571136305515301, 30162.0));
-        list.add(new UtilityMetadataEntry(BenchmarkDataset.CUP, BenchmarkUtilityMeasure.AECS, BenchmarkCriterion.P_UNIQUENESS, 0.1, 1.0042264222623232, 63441.0));
-        list.add(new UtilityMetadataEntry(BenchmarkDataset.FARS, BenchmarkUtilityMeasure.AECS, BenchmarkCriterion.P_UNIQUENESS, 0.1, 3.2135307226997774, 100937.0));
+        list.add(new UtilityMetadataEntry(BenchmarkDataset.CUP, BenchmarkUtilityMeasure.AECS, BenchmarkCriterion.P_UNIQUENESS, 0.1, 1.0078798951465566, 63441.0));
+        list.add(new UtilityMetadataEntry(BenchmarkDataset.FARS, BenchmarkUtilityMeasure.AECS, BenchmarkCriterion.P_UNIQUENESS, 0.1, 3.42310170583647, 100937.0));
         list.add(new UtilityMetadataEntry(BenchmarkDataset.ATUS, BenchmarkUtilityMeasure.AECS, BenchmarkCriterion.P_UNIQUENESS, 0.1, 11.034438305709024, 539253.0));
         list.add(new UtilityMetadataEntry(BenchmarkDataset.IHIS, BenchmarkUtilityMeasure.AECS, BenchmarkCriterion.P_UNIQUENESS, 0.1, 2.9739015164728926, 1193504.0));
+        
         list.add(new UtilityMetadataEntry(BenchmarkDataset.ADULT, BenchmarkUtilityMeasure.AECS, BenchmarkCriterion.K_ANONYMITY, 1.0, 21.37632884479093, 30162.0));
         list.add(new UtilityMetadataEntry(BenchmarkDataset.CUP, BenchmarkUtilityMeasure.AECS, BenchmarkCriterion.K_ANONYMITY, 1.0, 13.255536982866694, 63441.0));
         list.add(new UtilityMetadataEntry(BenchmarkDataset.FARS, BenchmarkUtilityMeasure.AECS, BenchmarkCriterion.K_ANONYMITY, 1.0, 23.975534441805227, 100937.0));
@@ -191,11 +195,13 @@ public class BenchmarkMetadata {
         list.add(new UtilityMetadataEntry(BenchmarkDataset.FARS, BenchmarkUtilityMeasure.AECS, BenchmarkCriterion.D_PRESENCE, 1.0, 63.879746835443036, 10093.0));
         list.add(new UtilityMetadataEntry(BenchmarkDataset.ATUS, BenchmarkUtilityMeasure.AECS, BenchmarkCriterion.D_PRESENCE, 1.0, 82.07762557077625, 53925.0));
         list.add(new UtilityMetadataEntry(BenchmarkDataset.IHIS, BenchmarkUtilityMeasure.AECS, BenchmarkCriterion.D_PRESENCE, 1.0, 27.411575562700964, 119350.0));
+        
         list.add(new UtilityMetadataEntry(BenchmarkDataset.ADULT, BenchmarkUtilityMeasure.AECS, BenchmarkCriterion.P_UNIQUENESS, 1.0, 2.571136305515301, 30162.0));
-        list.add(new UtilityMetadataEntry(BenchmarkDataset.CUP, BenchmarkUtilityMeasure.AECS, BenchmarkCriterion.P_UNIQUENESS, 1.0, 1.0042264222623232, 63441.0));
-        list.add(new UtilityMetadataEntry(BenchmarkDataset.FARS, BenchmarkUtilityMeasure.AECS, BenchmarkCriterion.P_UNIQUENESS, 1.0, 3.1120737497687614, 100937.0));
+        list.add(new UtilityMetadataEntry(BenchmarkDataset.CUP, BenchmarkUtilityMeasure.AECS, BenchmarkCriterion.P_UNIQUENESS, 1.0, 1.0078798951465566, 63441.0));
+        list.add(new UtilityMetadataEntry(BenchmarkDataset.FARS, BenchmarkUtilityMeasure.AECS, BenchmarkCriterion.P_UNIQUENESS, 1.0, 3.42310170583647, 100937.0));
         list.add(new UtilityMetadataEntry(BenchmarkDataset.ATUS, BenchmarkUtilityMeasure.AECS, BenchmarkCriterion.P_UNIQUENESS, 1.0, 11.034438305709024, 539253.0));
         list.add(new UtilityMetadataEntry(BenchmarkDataset.IHIS, BenchmarkUtilityMeasure.AECS, BenchmarkCriterion.P_UNIQUENESS, 1.0, 2.9739015164728926, 1193504.0));
+        
         list.add(new UtilityMetadataEntry(BenchmarkDataset.ADULT, BenchmarkUtilityMeasure.LOSS, BenchmarkCriterion.K_ANONYMITY, 0.0, 0.542210825407941, 1.0000000000000004));
         list.add(new UtilityMetadataEntry(BenchmarkDataset.CUP, BenchmarkUtilityMeasure.LOSS, BenchmarkCriterion.K_ANONYMITY, 0.0, 0.7480258231683719, 0.9999999999999987));
         list.add(new UtilityMetadataEntry(BenchmarkDataset.FARS, BenchmarkUtilityMeasure.LOSS, BenchmarkCriterion.K_ANONYMITY, 0.0, 0.640670712015275, 0.9999999999999987));
@@ -216,11 +222,13 @@ public class BenchmarkMetadata {
         list.add(new UtilityMetadataEntry(BenchmarkDataset.FARS, BenchmarkUtilityMeasure.LOSS, BenchmarkCriterion.D_PRESENCE, 0.0, 0.7289394816203074, 0.9999999999999987));
         list.add(new UtilityMetadataEntry(BenchmarkDataset.ATUS, BenchmarkUtilityMeasure.LOSS, BenchmarkCriterion.D_PRESENCE, 0.0, 0.4409948631213094, 1.0000000000000004));
         list.add(new UtilityMetadataEntry(BenchmarkDataset.IHIS, BenchmarkUtilityMeasure.LOSS, BenchmarkCriterion.D_PRESENCE, 0.0, 0.31683595541068077, 1.0000000000000004));
+        
         list.add(new UtilityMetadataEntry(BenchmarkDataset.ADULT, BenchmarkUtilityMeasure.LOSS, BenchmarkCriterion.P_UNIQUENESS, 0.0, 0.0049634194198648895, 1.0000000000000004));
         list.add(new UtilityMetadataEntry(BenchmarkDataset.CUP, BenchmarkUtilityMeasure.LOSS, BenchmarkCriterion.P_UNIQUENESS, 0.0, 0.00710363579774187, 0.9999999999999987));
         list.add(new UtilityMetadataEntry(BenchmarkDataset.FARS, BenchmarkUtilityMeasure.LOSS, BenchmarkCriterion.P_UNIQUENESS, 0.0, 0.02539784838239978, 0.9999999999999987));
         list.add(new UtilityMetadataEntry(BenchmarkDataset.ATUS, BenchmarkUtilityMeasure.LOSS, BenchmarkCriterion.P_UNIQUENESS, 0.0, 0.0, 1.0000000000000004));
         list.add(new UtilityMetadataEntry(BenchmarkDataset.IHIS, BenchmarkUtilityMeasure.LOSS, BenchmarkCriterion.P_UNIQUENESS, 0.0, 0.0, 1.0000000000000004));
+        
         list.add(new UtilityMetadataEntry(BenchmarkDataset.ADULT, BenchmarkUtilityMeasure.LOSS, BenchmarkCriterion.K_ANONYMITY, 0.1, 0.16273358184004305, 1.0000000000000004));
         list.add(new UtilityMetadataEntry(BenchmarkDataset.CUP, BenchmarkUtilityMeasure.LOSS, BenchmarkCriterion.K_ANONYMITY, 0.1, 0.1287966152224742, 0.9999999999999987));
         list.add(new UtilityMetadataEntry(BenchmarkDataset.FARS, BenchmarkUtilityMeasure.LOSS, BenchmarkCriterion.K_ANONYMITY, 0.1, 0.10147063173897553, 0.9999999999999987));
@@ -241,11 +249,13 @@ public class BenchmarkMetadata {
         list.add(new UtilityMetadataEntry(BenchmarkDataset.FARS, BenchmarkUtilityMeasure.LOSS, BenchmarkCriterion.D_PRESENCE, 0.1, 0.6824600738509348, 0.9999999999999987));
         list.add(new UtilityMetadataEntry(BenchmarkDataset.ATUS, BenchmarkUtilityMeasure.LOSS, BenchmarkCriterion.D_PRESENCE, 0.1, 0.4229456039455204, 1.0000000000000004));
         list.add(new UtilityMetadataEntry(BenchmarkDataset.IHIS, BenchmarkUtilityMeasure.LOSS, BenchmarkCriterion.D_PRESENCE, 0.1, 0.3101938163248257, 1.0000000000000004));
+        
         list.add(new UtilityMetadataEntry(BenchmarkDataset.ADULT, BenchmarkUtilityMeasure.LOSS, BenchmarkCriterion.P_UNIQUENESS, 0.1, 0.0049634194198648895, 1.0000000000000004));
         list.add(new UtilityMetadataEntry(BenchmarkDataset.CUP, BenchmarkUtilityMeasure.LOSS, BenchmarkCriterion.P_UNIQUENESS, 0.1, 0.00710363579774187, 0.9999999999999987));
         list.add(new UtilityMetadataEntry(BenchmarkDataset.FARS, BenchmarkUtilityMeasure.LOSS, BenchmarkCriterion.P_UNIQUENESS, 0.1, 0.018461399150697666, 0.9999999999999987));
         list.add(new UtilityMetadataEntry(BenchmarkDataset.ATUS, BenchmarkUtilityMeasure.LOSS, BenchmarkCriterion.P_UNIQUENESS, 0.1, 0.0, 1.0000000000000004));
         list.add(new UtilityMetadataEntry(BenchmarkDataset.IHIS, BenchmarkUtilityMeasure.LOSS, BenchmarkCriterion.P_UNIQUENESS, 0.1, 0.0, 1.0000000000000004));
+        
         list.add(new UtilityMetadataEntry(BenchmarkDataset.ADULT, BenchmarkUtilityMeasure.LOSS, BenchmarkCriterion.K_ANONYMITY, 1.0, 0.16273358184004305, 1.0000000000000004));
         list.add(new UtilityMetadataEntry(BenchmarkDataset.CUP, BenchmarkUtilityMeasure.LOSS, BenchmarkCriterion.K_ANONYMITY, 1.0, 0.1287966152224742, 0.9999999999999987));
         list.add(new UtilityMetadataEntry(BenchmarkDataset.FARS, BenchmarkUtilityMeasure.LOSS, BenchmarkCriterion.K_ANONYMITY, 1.0, 0.10147063173897553, 0.9999999999999987));
@@ -266,6 +276,7 @@ public class BenchmarkMetadata {
         list.add(new UtilityMetadataEntry(BenchmarkDataset.FARS, BenchmarkUtilityMeasure.LOSS, BenchmarkCriterion.D_PRESENCE, 1.0, 0.6824600738509348, 0.9999999999999987));
         list.add(new UtilityMetadataEntry(BenchmarkDataset.ATUS, BenchmarkUtilityMeasure.LOSS, BenchmarkCriterion.D_PRESENCE, 1.0, 0.4229456039455204, 1.0000000000000004));
         list.add(new UtilityMetadataEntry(BenchmarkDataset.IHIS, BenchmarkUtilityMeasure.LOSS, BenchmarkCriterion.D_PRESENCE, 1.0, 0.3101938163248257, 1.0000000000000004));
+        
         list.add(new UtilityMetadataEntry(BenchmarkDataset.ADULT, BenchmarkUtilityMeasure.LOSS, BenchmarkCriterion.P_UNIQUENESS, 1.0, 0.0049634194198648895, 1.0000000000000004));
         list.add(new UtilityMetadataEntry(BenchmarkDataset.CUP, BenchmarkUtilityMeasure.LOSS, BenchmarkCriterion.P_UNIQUENESS, 1.0, 0.00710363579774187, 0.9999999999999987));
         list.add(new UtilityMetadataEntry(BenchmarkDataset.FARS, BenchmarkUtilityMeasure.LOSS, BenchmarkCriterion.P_UNIQUENESS, 1.0, 0.018461399150697666, 0.9999999999999987));
