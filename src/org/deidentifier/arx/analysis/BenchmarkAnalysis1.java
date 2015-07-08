@@ -79,9 +79,9 @@ public class BenchmarkAnalysis1 {
             }
         }
         
-        own = (Math.pow(own, 1d/5d) - 1d) * 100d;
-        datafly = (Math.pow(datafly, 1d/5d) - 1d) * 100d;
-        igreedy = (Math.pow(igreedy, 1d/5d) - 1d) * 100d;
+        own = Double.valueOf(format((Math.pow(own, 1d/5d) - 1d) * 100d));
+        datafly = Double.valueOf(format((Math.pow(datafly, 1d/5d) - 1d) * 100d));
+        igreedy = Double.valueOf(format((Math.pow(igreedy, 1d/5d) - 1d) * 100d));
         
         Object[] output = new String[]{criterion.toString(),
                                        format(own, own, datafly, igreedy),
@@ -115,9 +115,9 @@ public class BenchmarkAnalysis1 {
         for (Iterator<CSVLine> iter = file.iterator(); iter.hasNext(); ) {
             CSVLine line = iter.next();
             if (selector.isSelected(line.getData())) {
-                double own = Double.valueOf(line.get("Own", Analyzer.VALUE)) * 100d;
-                double datafly = Double.valueOf(line.get("DataFly", Analyzer.VALUE)) * 100d;
-                double igreedy = Double.valueOf(line.get("IGreedy", Analyzer.VALUE)) * 100d;
+                double own = Double.valueOf(format(Double.valueOf(line.get("Own", Analyzer.VALUE)) * 100d));
+                double datafly = Double.valueOf(format(Double.valueOf(line.get("DataFly", Analyzer.VALUE)) * 100d));
+                double igreedy = Double.valueOf(format(Double.valueOf(line.get("IGreedy", Analyzer.VALUE)) * 100d));
                 Object[] output = new String[]{criterion.toString(),
                                                line.get("", "Dataset"),
                                                format(own, own, datafly, igreedy),
@@ -138,12 +138,22 @@ public class BenchmarkAnalysis1 {
      */
     private static String format(double value, double value1, double value2, double value3) {
         final DecimalFormat format = new DecimalFormat("###.###");
-        String result = format.format(value);
+        String result = format.format(value).replace(',', '.');
         if (value == value1 && value == value2 && value == value3) {
             result = "(-) " + result;
         } else  if (value <= value1 && value <= value2 && value <= value3) {
             result = "(+) " + result;
         }
         return result;
+    }
+
+    /**
+     * Formats the given output
+     * @param value
+     * @return
+     */
+    private static String format(double value) {
+        final DecimalFormat format = new DecimalFormat("###.###");
+        return format.format(value).replace(',', '.');
     }
 }
