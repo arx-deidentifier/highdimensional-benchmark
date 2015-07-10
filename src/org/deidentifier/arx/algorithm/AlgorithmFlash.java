@@ -313,6 +313,15 @@ public class AlgorithmFlash extends BenchmarkAlgorithm {
             return true;
         }
 
+        // Check, if we can prune based on a monotonic sub-metric
+        if (!checker.getConfiguration().isPracticalMonotonicity() && (getGlobalOptimum() != null)) {
+
+            // We skip, if we already know that this node has insufficient utility
+            if (transformation.hasProperty(solutionSpace.getPropertyInsufficientUtility())) {
+                return true;
+            }
+        }
+        
         // We need to process this node
         return false;
     }
@@ -354,7 +363,7 @@ public class AlgorithmFlash extends BenchmarkAlgorithm {
         checker.getHistory().setStorageStrategy(config.getSnapshotStorageStrategy());
 
         // Initialize
-        PriorityQueue<Integer> queue = new PriorityQueue<Integer>(solutionSpace.getTop().getLevel(), strategy);
+        PriorityQueue<Integer> queue = new PriorityQueue<Integer>(solutionSpace.getTop().getLevel() + 1, strategy);
         Transformation bottom = solutionSpace.getBottom();
         Transformation top = solutionSpace.getTop();
 
