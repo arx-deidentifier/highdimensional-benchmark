@@ -377,10 +377,10 @@ public class BenchmarkMetadata {
      */
     private static BenchmarkCriterion[] getCriteria() {
         return new BenchmarkCriterion[]{
-//            BenchmarkCriterion.K_ANONYMITY,
-//            BenchmarkCriterion.L_DIVERSITY,
-//            BenchmarkCriterion.T_CLOSENESS,
-//            BenchmarkCriterion.D_PRESENCE,
+            BenchmarkCriterion.K_ANONYMITY,
+            BenchmarkCriterion.L_DIVERSITY,
+            BenchmarkCriterion.T_CLOSENESS,
+            BenchmarkCriterion.D_PRESENCE,
             BenchmarkCriterion.P_UNIQUENESS
         };
     }
