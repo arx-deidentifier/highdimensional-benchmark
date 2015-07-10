@@ -20,6 +20,7 @@
 package org.deidentifier.arx.algorithm;
 
 import java.util.Comparator;
+import java.util.PriorityQueue;
 
 import org.deidentifier.arx.framework.check.NodeChecker;
 import org.deidentifier.arx.framework.check.history.History.StorageStrategy;
@@ -39,8 +40,6 @@ import de.linearbits.jhpl.PredictiveProperty;
  */
 public class AlgorithmLightning extends BenchmarkAlgorithm{
 
-    /** The maximal size of the priority queue */
-    private static final int         MAX_QUEUE_SIZE = 50000;
     /** Property */
     private final PredictiveProperty propertyChecked;
     /** Property */
@@ -86,7 +85,7 @@ public class AlgorithmLightning extends BenchmarkAlgorithm{
     * @param queue
     * @param transformation
     */
-    private void dfs(MinMaxPriorityQueue<Long> queue, Transformation transformation) {
+    private void dfs(PriorityQueue<Long> queue, Transformation transformation) {
         if ((timeLimit != 0 && getTime() > timeLimit) || timeLimit == 0 && getGlobalOptimum() != null) {
             return;
         }
@@ -103,7 +102,7 @@ public class AlgorithmLightning extends BenchmarkAlgorithm{
     * @param transformation
     * @return
     */
-    private Transformation expand(MinMaxPriorityQueue<Long> queue, Transformation transformation) {
+    private Transformation expand(PriorityQueue<Long> queue, Transformation transformation) {
         Transformation result = null;
         
         LongArrayList list = solutionSpace.getSuccessors(transformation.getIdentifier());
@@ -119,9 +118,6 @@ public class AlgorithmLightning extends BenchmarkAlgorithm{
             }
             if ((timeLimit != 0 && getTime() > timeLimit) || timeLimit == 0 && getGlobalOptimum() != null) {
                 return null;
-            }
-            while (queue.size() > MAX_QUEUE_SIZE) {
-                queue.removeTail();
             }
         }
         transformation.setProperty(propertyExpanded);
@@ -156,7 +152,7 @@ public class AlgorithmLightning extends BenchmarkAlgorithm{
     @Override
     protected void search() {
         timeStart = System.currentTimeMillis();
-        MinMaxPriorityQueue<Long> queue = new MinMaxPriorityQueue<Long>(MAX_QUEUE_SIZE, new Comparator<Long>() {
+        PriorityQueue<Long> queue = new PriorityQueue<Long>(stepping, new Comparator<Long>() {
             @Override
             public int compare(Long arg0, Long arg1) {
                 return solutionSpace.getUtility(arg0).compareTo(solutionSpace.getUtility(arg1));
