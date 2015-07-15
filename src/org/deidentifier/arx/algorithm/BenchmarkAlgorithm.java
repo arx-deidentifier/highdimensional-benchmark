@@ -41,9 +41,6 @@ public abstract class BenchmarkAlgorithm extends AbstractAlgorithm {
     /** The track record */
     private DoubleArrayList trackRecord = new DoubleArrayList();
 
-    /** Optimal utility */
-    private double          lastUtility     = 0d;
-
     /**
      * Creates a new instance
      * @param arg0
@@ -88,17 +85,9 @@ public abstract class BenchmarkAlgorithm extends AbstractAlgorithm {
         long newId = getGlobalOptimum() == null ? -1 : getGlobalOptimum().getIdentifier();
         if ((this instanceof AlgorithmLightning) && previousId != newId) {
             double utility = Double.valueOf(getGlobalOptimum().getInformationLoss().toString());
-            if (utility != this.lastUtility) {
-                int localdiscovery = (int)(System.currentTimeMillis() - time);
-                // Sometimes, there seem to be problems with milliseconds resolution
-                if (localdiscovery == discovery) { 
-                    localdiscovery++;
-                }
-                this.discovery = localdiscovery;
-                this.trackRecord.add(this.discovery);
-                this.trackRecord.add(utility);
-                this.lastUtility = utility;
-            }
+            this.discovery = (int) (System.currentTimeMillis() - time);
+            this.trackRecord.add(this.discovery);
+            this.trackRecord.add(utility);
         }
     }
 }
