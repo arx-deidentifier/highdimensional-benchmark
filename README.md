@@ -1,1 +1,1 @@
-# A benchmark of anonymization methods for high-dimensional in ARX
+# A benchmark of anonymization methods for high-dimensional data implemented in ARX
