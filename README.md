@@ -10,8 +10,7 @@ Setup
 ------
 
 Please context us at arx.deidentifier@gmail.com for information on how to obtain the required input data.
-More information about the datasets is also available
-[here](https://github.com/arx-deidentifier/anonbench)
+More information about the datasets is also available [here](https://github.com/arx-deidentifier/anonbench).
 
 Results
 ------
