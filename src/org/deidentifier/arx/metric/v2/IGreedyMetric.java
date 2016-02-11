@@ -1,6 +1,6 @@
 /*
- * Source code of the experiments from our 2015 paper 
- * "Utility-driven anonymization of high-dimensional data"
+ * Source code of the experiments from our 2016 paper 
+ * "Lightning: Utility-driven anonymization of high-dimensional data"
  *      
  * Copyright (C) 2015 Fabian Prasser, Raffael Bild, Johanna Eicher, Helmut Spengler, Florian Kohlmayer
  * 
@@ -35,7 +35,7 @@ import org.deidentifier.arx.metric.Metric;
  *
  * @author Fabian Prasser
  */
-public class MetricIGreedy extends Metric<InformationLossIGreedy> {
+public class IGreedyMetric extends Metric<IGreedyInformationLoss> {
    
     /** SVUID */
     private static final long         serialVersionUID = -2464970491333541188L;
@@ -49,7 +49,7 @@ public class MetricIGreedy extends Metric<InformationLossIGreedy> {
      * @param monotonic
      * @param independent
      */
-    public MetricIGreedy() {
+    public IGreedyMetric() {
         super(false, false);
     }
 
@@ -69,7 +69,7 @@ public class MetricIGreedy extends Metric<InformationLossIGreedy> {
     }
 
     @Override
-    protected InformationLossWithBound<InformationLossIGreedy> getInformationLossInternal(Transformation node, HashGroupify g) {
+    protected InformationLossWithBound<IGreedyInformationLoss> getInformationLossInternal(Transformation node, HashGroupify g) {
 
         // Determine minimal equivalence class size (worst case per generalization)
         int greedy = Integer.MAX_VALUE;
@@ -90,22 +90,22 @@ public class MetricIGreedy extends Metric<InformationLossIGreedy> {
         datafly = -datafly;
 
         double[] array = new double[] { greedy, datafly };
-        return new InformationLossWithBound<InformationLossIGreedy>(new InformationLossIGreedy(array), new InformationLossIGreedy(array));
+        return new InformationLossWithBound<IGreedyInformationLoss>(new IGreedyInformationLoss(array), new IGreedyInformationLoss(array));
     }
 
     @Override
-    protected InformationLossWithBound<InformationLossIGreedy> getInformationLossInternal(Transformation node, HashGroupifyEntry entry) {
-        return new InformationLossWithBound<InformationLossIGreedy>(
-                new InformationLossIGreedy(new double[]{entry.count, entry.count}), new InformationLossIGreedy(new double[]{entry.count, entry.count}));
+    protected InformationLossWithBound<IGreedyInformationLoss> getInformationLossInternal(Transformation node, HashGroupifyEntry entry) {
+        return new InformationLossWithBound<IGreedyInformationLoss>(
+                new IGreedyInformationLoss(new double[]{entry.count, entry.count}), new IGreedyInformationLoss(new double[]{entry.count, entry.count}));
     }
 
     @Override
-    protected InformationLossIGreedy getLowerBoundInternal(Transformation node) {
+    protected IGreedyInformationLoss getLowerBoundInternal(Transformation node) {
         return null;
     }
 
     @Override
-    protected InformationLossIGreedy getLowerBoundInternal(Transformation node, HashGroupify groupify) {
+    protected IGreedyInformationLoss getLowerBoundInternal(Transformation node, HashGroupify groupify) {
         return getInformationLossInternal(node, groupify).getLowerBound();
     }
 

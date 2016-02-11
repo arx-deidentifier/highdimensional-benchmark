@@ -1,6 +1,6 @@
 /*
- * Source code of the experiments from our 2015 paper 
- * "Utility-driven anonymization of high-dimensional data"
+ * Source code of the experiments from our 2016 paper 
+ * "Lightning: Utility-driven anonymization of high-dimensional data"
  *      
  * Copyright (C) 2015 Fabian Prasser, Raffael Bild, Johanna Eicher, Helmut Spengler, Florian Kohlmayer
  * 
@@ -28,13 +28,16 @@ import cern.colt.list.LongArrayList;
 import de.linearbits.jhpl.PredictiveProperty;
 
 /**
+ * A base class for algorithms that find a minimally anonymous solution. This class is used
+ * as a basis for implementing IGreedy and DataFly, both algorithms are modeled as instances
+ * of this class using different models for measuring information loss.
  * 
  * @author Fabian Prasser
  * @author Raffael Bild
  * @author Johanna Eicher
  * @author Helmut Spengler
  */
-public class AlgorithmMinimal extends BenchmarkAlgorithm{
+public class AlgorithmMinimal extends AlgorithmBenchmark{
    
     /** Property */
     private final PredictiveProperty propertyChecked;
@@ -86,9 +89,11 @@ public class AlgorithmMinimal extends BenchmarkAlgorithm{
     * @return
     */
     private Transformation expand(Transformation transformation) {
-        Transformation result = null;
         
+        // Result
+        Transformation result = null;
 
+        // Find
         LongArrayList list = solutionSpace.getSuccessors(transformation.getIdentifier());
         for (int i=0; i<list.size(); i++) {
             long id = list.getQuick(i);
@@ -106,6 +111,7 @@ public class AlgorithmMinimal extends BenchmarkAlgorithm{
         }
         return result;
     }
+    
     @Override
     protected void search() {
         Transformation bottom = solutionSpace.getBottom();

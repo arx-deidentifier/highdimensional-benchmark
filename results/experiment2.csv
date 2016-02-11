@@ -1,5 +1,5 @@
-;;;;Flash;Total;Discovery;Utility
-Utility measure;Privacy model;Suppression limit;Dataset;Value;Value;Value;Value
+;;;;Flash;Lightning;Discovery;Quality
+Quality measure;Privacy model;Suppression limit;Dataset;Value;Value;Value;Value
 AECS;(5)-anonymity;0.0;ADULT;33.0;1362.0;0.0;-1.0
 AECS;(5)-anonymity;0.0;CUP;32.0;22019.0;0.0;-1.0
 AECS;(5)-anonymity;0.0;FARS;62.0;2723.0;0.0;-1.0

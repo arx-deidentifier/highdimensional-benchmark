@@ -1,6 +1,6 @@
 /*
- * Source code of the experiments from our 2015 paper 
- * "Utility-driven anonymization of high-dimensional data"
+ * Source code of the experiments from our 2016 paper 
+ * "Lightning: Utility-driven anonymization of high-dimensional data"
  *      
  * Copyright (C) 2015 Fabian Prasser, Raffael Bild, Johanna Eicher, Helmut Spengler, Florian Kohlmayer
  * 
@@ -23,31 +23,31 @@ import java.io.File;
 import java.io.IOException;
 
 import org.deidentifier.arx.BenchmarkEnvironment;
-import org.deidentifier.arx.BenchmarkEnvironment.BenchmarkRun;
-import org.deidentifier.arx.benchmark.BenchmarkSetup.BenchmarkAlgorithm;
-import org.deidentifier.arx.benchmark.BenchmarkSetup.BenchmarkCriterion;
-import org.deidentifier.arx.benchmark.BenchmarkSetup.BenchmarkDataset;
-import org.deidentifier.arx.benchmark.BenchmarkSetup.BenchmarkUtilityMeasure;
+import org.deidentifier.arx.BenchmarkEnvironment.BenchmarkResults;
+import org.deidentifier.arx.BenchmarkSetup.BenchmarkAlgorithm;
+import org.deidentifier.arx.BenchmarkSetup.BenchmarkPrivacyModel;
+import org.deidentifier.arx.BenchmarkSetup.BenchmarkDataset;
+import org.deidentifier.arx.BenchmarkSetup.BenchmarkQualityMeasure;
 
 import cern.colt.list.DoubleArrayList;
 import de.linearbits.subframe.Benchmark;
 import de.linearbits.subframe.analyzer.ValueBuffer;
 
 /**
- * Performs the first experiment, which is a comparison of our approach with a globally-optimal algorithm.
+ * Performs the third experiment, which is an evaluation of our approach with high-dimensional data.
  *  
  * @author Fabian Prasser
  */
 public class BenchmarkExperiment3 {
 
     /** The benchmark instance */
-    private static final Benchmark BENCHMARK         = new Benchmark(new String[] { "Utility measure", "Privacy model", "Suppression limit", "Dataset" });
+    private static final Benchmark BENCHMARK         = new Benchmark(new String[] { "Quality measure", "Privacy model", "Suppression limit", "Dataset" });
 
     /** Time */
     public static final int        TIME              = BENCHMARK.addMeasure("Time");
 
     /** Utility */
-    public static final int        UTILITY           = BENCHMARK.addMeasure("Utility");
+    public static final int        QUALITY           = BENCHMARK.addMeasure("Quality");
 
     /** Complete search performed */
     public static final int        COMPLETE          = BENCHMARK.addMeasure("Complete");
@@ -62,12 +62,12 @@ public class BenchmarkExperiment3 {
         
         // Init
         BENCHMARK.addAnalyzer(TIME, new ValueBuffer());
-        BENCHMARK.addAnalyzer(UTILITY, new ValueBuffer());
+        BENCHMARK.addAnalyzer(QUALITY, new ValueBuffer());
         BENCHMARK.addAnalyzer(COMPLETE, new ValueBuffer());
 
         // For each relevant combination
-        for (BenchmarkUtilityMeasure measure : getUtilityMeasures()) {
-            for (BenchmarkCriterion criterion : getCriteria()) {
+        for (BenchmarkQualityMeasure measure : getQualityMeasures()) {
+            for (BenchmarkPrivacyModel criterion : getPrivacyModels()) {
                 for (double suppressionLimit : getSuppressionLimits()) {
                     for (BenchmarkDataset dataset : getDatasets()) {
 
@@ -88,10 +88,10 @@ public class BenchmarkExperiment3 {
      * Returns all criteria for this experiment
      * @return
      */
-    public static BenchmarkCriterion[] getCriteria() {
-        return new BenchmarkCriterion[]{
-            BenchmarkCriterion.K_ANONYMITY,
-            BenchmarkCriterion.P_UNIQUENESS
+    public static BenchmarkPrivacyModel[] getPrivacyModels() {
+        return new BenchmarkPrivacyModel[]{
+            BenchmarkPrivacyModel.K_ANONYMITY,
+            BenchmarkPrivacyModel.P_UNIQUENESS
         };
     }
     /**
@@ -118,10 +118,10 @@ public class BenchmarkExperiment3 {
      * Returns all utility measures for this experiment
      * @return
      */
-    public static BenchmarkUtilityMeasure[] getUtilityMeasures() {
-        return new BenchmarkUtilityMeasure[] { 
-                BenchmarkUtilityMeasure.AECS,
-                BenchmarkUtilityMeasure.LOSS
+    public static BenchmarkQualityMeasure[] getQualityMeasures() {
+        return new BenchmarkQualityMeasure[] { 
+                BenchmarkQualityMeasure.AECS,
+                BenchmarkQualityMeasure.LOSS
         };
     }
 
@@ -136,13 +136,13 @@ public class BenchmarkExperiment3 {
      * @throws IOException
      */
     private static void performExperiment(BenchmarkDataset dataset,
-                                          BenchmarkUtilityMeasure measure,
-                                          BenchmarkCriterion criterion,
+                                          BenchmarkQualityMeasure measure,
+                                          BenchmarkPrivacyModel criterion,
                                           double suppressionLimit) throws IOException {
         
         System.out.println("Performing experiment 3 - " + dataset + "/" + measure + "/" +criterion + "/" + suppressionLimit);
         
-        BenchmarkRun run = BenchmarkEnvironment.performRun(BenchmarkAlgorithm.LIGHTNING, dataset, measure, criterion, 600 * 1000, suppressionLimit);
+        BenchmarkResults run = BenchmarkEnvironment.getBenchmarkResults(BenchmarkAlgorithm.LIGHTNING, dataset, measure, criterion, 600 * 1000, suppressionLimit);
         DoubleArrayList trackRecord = run.trackRecord;
         boolean complete = run.executionTime < 600 * 1000;
         
@@ -153,7 +153,7 @@ public class BenchmarkExperiment3 {
             double utility = min == max ? 1d : (trackRecord.get(i + 1) - min) / (max - min);
             if (utility == -0d) utility = +0d;
             BENCHMARK.addValue(TIME, trackRecord.get(i));
-            BENCHMARK.addValue(UTILITY, utility);
+            BENCHMARK.addValue(QUALITY, utility);
             BENCHMARK.addValue(COMPLETE, complete);
             if (i < trackRecord.size() - 2) {
                 BENCHMARK.addRun(measure.toString(), criterion.toString(), String.valueOf(suppressionLimit), dataset.toString());

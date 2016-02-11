@@ -1,6 +1,6 @@
 /*
- * Source code of the experiments from our 2015 paper 
- * "Utility-driven anonymization of high-dimensional data"
+ * Source code of the experiments from our 2016 paper 
+ * "Lightning: Utility-driven anonymization of high-dimensional data"
  *      
  * Copyright (C) 2015 Fabian Prasser, Raffael Bild, Johanna Eicher, Helmut Spengler, Florian Kohlmayer
  * 
@@ -32,13 +32,15 @@ import de.linearbits.jhpl.PredictiveProperty;
 
 
 /**
+ * This class implements the Lightning algorithm. 
+ * Use a time limit of zero to search for a minimally anonymous solution.
  * 
  * @author Fabian Prasser
  * @author Raffael Bild
  * @author Johanna Eicher
  * @author Helmut Spengler
  */
-public class AlgorithmLightning extends BenchmarkAlgorithm{
+public class AlgorithmLightning extends AlgorithmBenchmark{
 
     /** Property */
     private final PredictiveProperty propertyChecked;

@@ -1,6 +1,6 @@
 /*
- * Source code of the experiments from our 2015 paper 
- * "Utility-driven anonymization of high-dimensional data"
+ * Source code of the experiments from our 2016 paper 
+ * "Lightning: Utility-driven anonymization of high-dimensional data"
  *      
  * Copyright (C) 2015 Fabian Prasser, Raffael Bild, Johanna Eicher, Helmut Spengler, Florian Kohlmayer
  * 
@@ -25,9 +25,9 @@ import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.util.Iterator;
 
+import org.deidentifier.arx.BenchmarkSetup.BenchmarkPrivacyModel;
+import org.deidentifier.arx.BenchmarkSetup.BenchmarkQualityMeasure;
 import org.deidentifier.arx.benchmark.BenchmarkExperiment1;
-import org.deidentifier.arx.benchmark.BenchmarkSetup.BenchmarkCriterion;
-import org.deidentifier.arx.benchmark.BenchmarkSetup.BenchmarkUtilityMeasure;
 
 import de.linearbits.objectselector.Selector;
 import de.linearbits.subframe.analyzer.Analyzer;
@@ -52,26 +52,34 @@ public class BenchmarkAnalysis1 {
         CSVFile file = new CSVFile(new File("results/experiment1.csv"));
 
         // For each plot
-        for (BenchmarkUtilityMeasure measure : BenchmarkExperiment1.getUtilityMeasures()) {
-            System.out.println("Measure: " + measure);
+        for (BenchmarkQualityMeasure measure : BenchmarkExperiment1.getUtilityMeasures()) {
             for (double suppression : BenchmarkExperiment1.getSuppressionLimits()) {
-                System.out.println(" - Suppression: " + String.valueOf(suppression));
-                System.out.format("   - %-30s%-30s%-30s%-30s\n", new Object[]{"Criterion", "Own", "DataFly", "IGreedy"});
-                for (BenchmarkCriterion criterion : BenchmarkExperiment1.getCriteria()) {
+                System.out.println("----------------------");
+                System.out.println("Quality measure: " + measure);
+                System.out.println("Suppression limit: " + String.valueOf(suppression));
+                System.out.println("----------------------");
+                System.out.println("");
+                System.out.format("%-30s%-30s%-30s%-30s\n", new Object[]{"Privacy model", "Lightning", "DataFly", "IGreedy"});
+                for (BenchmarkPrivacyModel criterion : BenchmarkExperiment1.getCriteria()) {
                     analyzeMean(file, measure, suppression, criterion); 
                 }
+                System.out.println("");
             }
         }
         
         // For each plot
-        for (BenchmarkUtilityMeasure measure : BenchmarkExperiment1.getUtilityMeasures()) {
-            System.out.println("Measure: " + measure);
+        for (BenchmarkQualityMeasure measure : BenchmarkExperiment1.getUtilityMeasures()) {
             for (double suppression : BenchmarkExperiment1.getSuppressionLimits()) {
-                System.out.println(" - Suppression: " + String.valueOf(suppression));
-                System.out.format("   - %-30s%-30s%-30s%-30s%-30s\n", new Object[]{"Dataset", "Criterion", "Own", "DataFly", "IGreedy"});
-                for (BenchmarkCriterion criterion : BenchmarkExperiment1.getCriteria()) {
+                System.out.println("----------------------");
+                System.out.println("Quality measure: " + measure);
+                System.out.println("Suppression limit: " + String.valueOf(suppression));
+                System.out.println("----------------------");
+                System.out.println("");
+                System.out.format("%-30s%-30s%-30s%-30s%-30s\n", new Object[]{"Dataset", "Privacy model", "Lightning", "DataFly", "IGreedy"});
+                for (BenchmarkPrivacyModel criterion : BenchmarkExperiment1.getCriteria()) {
                     analyze(file, measure, suppression, criterion); 
                 }
+                System.out.println("");
             }
         }
     }
@@ -85,14 +93,14 @@ public class BenchmarkAnalysis1 {
      * @throws ParseException 
      */
     private static void analyzeMean(CSVFile file,
-                                BenchmarkUtilityMeasure measure,
+                                BenchmarkQualityMeasure measure,
                                 double suppression,
-                                BenchmarkCriterion criterion) throws ParseException {
+                                BenchmarkPrivacyModel criterion) throws ParseException {
 
         // Select
         Selector<String[]> selector = file.getSelectorBuilder()
                                           .field("Suppression limit").equals(String.valueOf(suppression)).and()
-                                          .field("Utility measure").equals(measure.toString()).and()
+                                          .field("Quality measure").equals(measure.toString()).and()
                                           .field("Privacy model").equals(criterion.toString())
                                           .build();
 
@@ -103,7 +111,7 @@ public class BenchmarkAnalysis1 {
         for (Iterator<CSVLine> iter = file.iterator(); iter.hasNext(); ) {
             CSVLine line = iter.next();
             if (selector.isSelected(line.getData())) {
-                own *= Double.valueOf(line.get("Own", Analyzer.VALUE)) + 1d;
+                own *= Double.valueOf(line.get("Lightning", Analyzer.VALUE)) + 1d;
                 datafly *= Double.valueOf(line.get("DataFly", Analyzer.VALUE)) + 1d;
                 igreedy *= Double.valueOf(line.get("IGreedy", Analyzer.VALUE)) + 1d; 
             }
@@ -130,14 +138,14 @@ public class BenchmarkAnalysis1 {
      * @throws ParseException 
      */
     private static void analyze(CSVFile file,
-                                BenchmarkUtilityMeasure measure,
+                                BenchmarkQualityMeasure measure,
                                 double suppression,
-                                BenchmarkCriterion criterion) throws ParseException {
+                                BenchmarkPrivacyModel criterion) throws ParseException {
 
         // Select
         Selector<String[]> selector = file.getSelectorBuilder()
                                           .field("Suppression limit").equals(String.valueOf(suppression)).and()
-                                          .field("Utility measure").equals(measure.toString()).and()
+                                          .field("Quality measure").equals(measure.toString()).and()
                                           .field("Privacy model").equals(criterion.toString())
                                           .build();
 
@@ -145,7 +153,7 @@ public class BenchmarkAnalysis1 {
         for (Iterator<CSVLine> iter = file.iterator(); iter.hasNext(); ) {
             CSVLine line = iter.next();
             if (selector.isSelected(line.getData())) {
-                double own = Double.valueOf(format(Double.valueOf(line.get("Own", Analyzer.VALUE)) * 100d));
+                double own = Double.valueOf(format(Double.valueOf(line.get("Lightning", Analyzer.VALUE)) * 100d));
                 double datafly = Double.valueOf(format(Double.valueOf(line.get("DataFly", Analyzer.VALUE)) * 100d));
                 double igreedy = Double.valueOf(format(Double.valueOf(line.get("IGreedy", Analyzer.VALUE)) * 100d));
                 Object[] output = new String[]{criterion.toString(),

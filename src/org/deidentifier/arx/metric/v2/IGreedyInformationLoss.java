@@ -1,6 +1,6 @@
 /*
- * Source code of the experiments from our 2015 paper 
- * "Utility-driven anonymization of high-dimensional data"
+ * Source code of the experiments from our 2016 paper 
+ * "Lightning: Utility-driven anonymization of high-dimensional data"
  *      
  * Copyright (C) 2015 Fabian Prasser, Raffael Bild, Johanna Eicher, Helmut Spengler, Florian Kohlmayer
  * 
@@ -28,10 +28,11 @@ import org.deidentifier.arx.metric.InformationLoss;
  * 
  * @author Fabian Prasser
  */
-public class InformationLossIGreedy extends InformationLoss<double[]> {
+public class IGreedyInformationLoss extends InformationLoss<double[]> {
 
     /** SVUID */
     private static final long serialVersionUID = 3193042896130786734L;
+    
     /** Values. */
     private double[]          value;
 
@@ -40,14 +41,13 @@ public class InformationLossIGreedy extends InformationLoss<double[]> {
      * 
      * @param value
      */
-    InformationLossIGreedy(final double value[]) {
+    IGreedyInformationLoss(final double value[]) {
         this.value = value;
     }
 
     @Override
     public InformationLoss<double[]> clone() {
-        return new InformationLossIGreedy(value);
-
+        return new IGreedyInformationLoss(value);
     }
 
     @Override
@@ -55,17 +55,14 @@ public class InformationLossIGreedy extends InformationLoss<double[]> {
         if (other == null) {
             throw new IllegalArgumentException("Argument must not be null");
         } else {
-            int greedy = Double.valueOf(this.value[0])
-                               .compareTo(Double.valueOf(((InformationLossIGreedy) other).value[0]));
-            int datafly = Double.valueOf(this.value[1])
-                                .compareTo(Double.valueOf(((InformationLossIGreedy) other).value[1]));
+            int greedy = Double.valueOf(this.value[0]).compareTo(Double.valueOf(((IGreedyInformationLoss) other).value[0]));
+            int datafly = Double.valueOf(this.value[1]).compareTo(Double.valueOf(((IGreedyInformationLoss) other).value[1]));
 
-            // use comparison of greatest minimal equivalence class size if not equal
             if (greedy != 0) {
+                // Use comparison of greatest minimal equivalence class size if not equal
                 return greedy;
-            }
-            // use number of distinct values
-            else {
+            } else {
+                // Use number of distinct values
                 return datafly;
             }
         }
@@ -76,7 +73,7 @@ public class InformationLossIGreedy extends InformationLoss<double[]> {
         if (this == obj) return true;
         if (obj == null) return false;
         if (getClass() != obj.getClass()) return false;
-        InformationLossIGreedy other = (InformationLossIGreedy) obj;
+        IGreedyInformationLoss other = (IGreedyInformationLoss) obj;
         return Arrays.equals(this.value, other.value);
     }
 
@@ -93,14 +90,14 @@ public class InformationLossIGreedy extends InformationLoss<double[]> {
     @Override
     public void max(final InformationLoss<?> other) {
         if (this.compareTo(other) < 0) {
-            this.value = ((InformationLossIGreedy) other).value;
+            this.value = ((IGreedyInformationLoss) other).value;
         }
     }
 
     @Override
     public void min(final InformationLoss<?> other) {
         if (this.compareTo(other) > 0) {
-            this.value = ((InformationLossIGreedy) other).value;
+            this.value = ((IGreedyInformationLoss) other).value;
         }
     }
 

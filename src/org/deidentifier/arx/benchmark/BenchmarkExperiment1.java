@@ -1,6 +1,6 @@
 /*
- * Source code of the experiments from our 2015 paper 
- * "Utility-driven anonymization of high-dimensional data"
+ * Source code of the experiments from our 2016 paper 
+ * "Lightning: Utility-driven anonymization of high-dimensional data"
  *      
  * Copyright (C) 2015 Fabian Prasser, Raffael Bild, Johanna Eicher, Helmut Spengler, Florian Kohlmayer
  * 
@@ -23,17 +23,17 @@ import java.io.File;
 import java.io.IOException;
 
 import org.deidentifier.arx.BenchmarkEnvironment;
-import org.deidentifier.arx.benchmark.BenchmarkSetup.BenchmarkAlgorithm;
-import org.deidentifier.arx.benchmark.BenchmarkSetup.BenchmarkCriterion;
-import org.deidentifier.arx.benchmark.BenchmarkSetup.BenchmarkDataset;
-import org.deidentifier.arx.benchmark.BenchmarkSetup.BenchmarkUtilityMeasure;
+import org.deidentifier.arx.BenchmarkSetup.BenchmarkAlgorithm;
+import org.deidentifier.arx.BenchmarkSetup.BenchmarkPrivacyModel;
+import org.deidentifier.arx.BenchmarkSetup.BenchmarkDataset;
+import org.deidentifier.arx.BenchmarkSetup.BenchmarkQualityMeasure;
 import org.deidentifier.arx.BenchmarkMetadata;
 
 import de.linearbits.subframe.Benchmark;
 import de.linearbits.subframe.analyzer.ValueBuffer;
 
 /**
- * Performs the first experiment, which is a comparison of our approach with previous works
+ * Performs the first experiment, which is a comparison of our approach with previous approaches
  * using the concept of minimal anonymity.
  *  
  * @author Fabian Prasser
@@ -41,14 +41,12 @@ import de.linearbits.subframe.analyzer.ValueBuffer;
 public class BenchmarkExperiment1 {
 
     /** The benchmark instance */
-    private static final Benchmark BENCHMARK = new Benchmark(new String[] { "Utility measure", "Suppression limit", "Privacy model", "Dataset"});
+    private static final Benchmark BENCHMARK = new Benchmark(new String[] { "Quality measure", "Suppression limit", "Privacy model", "Dataset"});
 
     /** Label for result quality */
-    public static final int        OWN       = BENCHMARK.addMeasure("Own");
-
+    public static final int        LIGHTNING = BENCHMARK.addMeasure("Lightning");
     /** Label for result quality */
     public static final int        DATAFLY   = BENCHMARK.addMeasure("DataFly");
-
     /** Label for result quality */
     public static final int        IGREEDY   = BENCHMARK.addMeasure("IGreedy");
 
@@ -61,21 +59,21 @@ public class BenchmarkExperiment1 {
     public static void main(String[] args) throws IOException {
         
         // Init
-        BENCHMARK.addAnalyzer(OWN, new ValueBuffer());
+        BENCHMARK.addAnalyzer(LIGHTNING, new ValueBuffer());
         BENCHMARK.addAnalyzer(DATAFLY, new ValueBuffer());
         BENCHMARK.addAnalyzer(IGREEDY, new ValueBuffer());
 
         // For each relevant combination
-        for (BenchmarkUtilityMeasure measure : getUtilityMeasures()) {
+        for (BenchmarkQualityMeasure measure : getUtilityMeasures()) {
             for (double suppressionLimit : getSuppressionLimits()) {
-                for (BenchmarkCriterion criterion : getCriteria()) {
+                for (BenchmarkPrivacyModel criterion : getCriteria()) {
                     for (BenchmarkDataset dataset : getDatasets()) {
 
                         // Run
                         BENCHMARK.addRun(measure.toString(), String.valueOf(suppressionLimit), criterion.toString(), dataset.toString());
                         
                         // Measurements
-                        performExperiment(BenchmarkAlgorithm.LIGHTNIG_MINIMAL, OWN, dataset, measure, criterion, suppressionLimit);
+                        performExperiment(BenchmarkAlgorithm.LIGHTNIG_MINIMAL, LIGHTNING, dataset, measure, criterion, suppressionLimit);
                         performExperiment(BenchmarkAlgorithm.DATAFLY, DATAFLY, dataset, measure, criterion, suppressionLimit);
                         performExperiment(BenchmarkAlgorithm.IGREEDY, IGREEDY, dataset, measure, criterion, suppressionLimit);
                         
@@ -90,13 +88,13 @@ public class BenchmarkExperiment1 {
      * Returns all criteria for this experiment
      * @return
      */
-    public static BenchmarkCriterion[] getCriteria() {
-        return new BenchmarkCriterion[]{
-            BenchmarkCriterion.K_ANONYMITY,
-            BenchmarkCriterion.L_DIVERSITY,
-            BenchmarkCriterion.T_CLOSENESS,
-            BenchmarkCriterion.D_PRESENCE,
-            BenchmarkCriterion.P_UNIQUENESS
+    public static BenchmarkPrivacyModel[] getCriteria() {
+        return new BenchmarkPrivacyModel[]{
+            BenchmarkPrivacyModel.K_ANONYMITY,
+            BenchmarkPrivacyModel.L_DIVERSITY,
+            BenchmarkPrivacyModel.T_CLOSENESS,
+            BenchmarkPrivacyModel.D_PRESENCE,
+            BenchmarkPrivacyModel.P_UNIQUENESS
         };
     }
     /**
@@ -124,10 +122,10 @@ public class BenchmarkExperiment1 {
      * Returns all utility measures for this experiment
      * @return
      */
-    public static BenchmarkUtilityMeasure[] getUtilityMeasures() {
-        return new BenchmarkUtilityMeasure[] { 
-                BenchmarkUtilityMeasure.AECS,
-                BenchmarkUtilityMeasure.LOSS
+    public static BenchmarkQualityMeasure[] getUtilityMeasures() {
+        return new BenchmarkQualityMeasure[] { 
+                BenchmarkQualityMeasure.AECS,
+                BenchmarkQualityMeasure.LOSS
         };
     }
 
@@ -144,14 +142,14 @@ public class BenchmarkExperiment1 {
     private static void performExperiment(BenchmarkAlgorithm algorithm,
                                          int benchmarkMeasure,
                                          BenchmarkDataset dataset,
-                                         BenchmarkUtilityMeasure measure,
-                                         BenchmarkCriterion criterion,
+                                         BenchmarkQualityMeasure measure,
+                                         BenchmarkPrivacyModel criterion,
                                          double suppressionLimit) throws IOException {
 
         System.out.println("Performing experiment 1 - " + algorithm + "/" + dataset + "/" + measure + "/" +criterion + "/" + suppressionLimit);
         
         // Measure utility
-        double value = BenchmarkEnvironment.performRun(algorithm, dataset, measure, criterion, 0, suppressionLimit).informationLoss;
+        double value = BenchmarkEnvironment.getBenchmarkResults(algorithm, dataset, measure, criterion, 0, suppressionLimit).informationLoss;
         
         // Normalize
         double min = BenchmarkMetadata.getMinimalAndMaximalInformationLoss(dataset, measure, criterion, suppressionLimit)[0];
@@ -159,10 +157,6 @@ public class BenchmarkExperiment1 {
         double result = value - min;
         result /= max-min;
 
-        if (result < 0) {
-            System.out.println("Iloss out of bounds for " + algorithm + "/" + dataset + "/" + measure + "/" + criterion + ": " + value);
-        }
-        
         // Add
         BENCHMARK.addValue(benchmarkMeasure, result);
     }

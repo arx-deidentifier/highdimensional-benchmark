@@ -1,6 +1,6 @@
 /*
- * Source code of the experiments from our 2015 paper 
- * "Utility-driven anonymization of high-dimensional data"
+ * Source code of the experiments from our 2016 paper 
+ * "Lightning: Utility-driven anonymization of high-dimensional data"
  *      
  * Copyright (C) 2015 Fabian Prasser, Raffael Bild, Johanna Eicher, Helmut Spengler, Florian Kohlmayer
  * 
@@ -44,7 +44,7 @@ import de.linearbits.jhpl.PredictiveProperty;
  * @author Fabian Prasser
  * @author Florian Kohlmayer
  */
-public class AlgorithmFlash extends BenchmarkAlgorithm {
+public class AlgorithmFlash extends AlgorithmBenchmark {
 
     /** Configuration for the algorithm's phases. */
     protected final FLASHConfiguration config;

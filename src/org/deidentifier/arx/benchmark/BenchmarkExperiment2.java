@@ -1,6 +1,6 @@
 /*
- * Source code of the experiments from our 2015 paper 
- * "Utility-driven anonymization of high-dimensional data"
+ * Source code of the experiments from our 2016 paper 
+ * "Lightning: Utility-driven anonymization of high-dimensional data"
  *      
  * Copyright (C) 2015 Fabian Prasser, Raffael Bild, Johanna Eicher, Helmut Spengler, Florian Kohlmayer
  * 
@@ -23,18 +23,18 @@ import java.io.File;
 import java.io.IOException;
 
 import org.deidentifier.arx.BenchmarkEnvironment;
-import org.deidentifier.arx.BenchmarkEnvironment.BenchmarkRun;
-import org.deidentifier.arx.benchmark.BenchmarkSetup.BenchmarkAlgorithm;
-import org.deidentifier.arx.benchmark.BenchmarkSetup.BenchmarkCriterion;
-import org.deidentifier.arx.benchmark.BenchmarkSetup.BenchmarkDataset;
-import org.deidentifier.arx.benchmark.BenchmarkSetup.BenchmarkUtilityMeasure;
+import org.deidentifier.arx.BenchmarkEnvironment.BenchmarkResults;
+import org.deidentifier.arx.BenchmarkSetup.BenchmarkAlgorithm;
+import org.deidentifier.arx.BenchmarkSetup.BenchmarkPrivacyModel;
+import org.deidentifier.arx.BenchmarkSetup.BenchmarkDataset;
+import org.deidentifier.arx.BenchmarkSetup.BenchmarkQualityMeasure;
 import org.deidentifier.arx.BenchmarkMetadata;
 
 import de.linearbits.subframe.Benchmark;
 import de.linearbits.subframe.analyzer.ValueBuffer;
 
 /**
- * Performs the first experiment, which is a comparison of our approach with a globally-optimal algorithm.
+ * Performs the second experiment, which is a comparison of our approach with a globally-optimal algorithm.
  *  
  * @author Fabian Prasser
  */
@@ -44,18 +44,17 @@ public class BenchmarkExperiment2 {
     private static final int       REPETITIONS = 5;
 
     /** The benchmark instance */
-    private static final Benchmark BENCHMARK         = new Benchmark(new String[] { "Utility measure", "Privacy model", "Suppression limit", "Dataset" });
+    private static final Benchmark BENCHMARK   = new Benchmark(new String[] { "Quality measure", "Privacy model", "Suppression limit", "Dataset" });
 
     /** Time */
-    public static final int        FLASH             = BENCHMARK.addMeasure("Flash");
-
+    public static final int        FLASH       = BENCHMARK.addMeasure("Flash");
     /** Time */
-    public static final int        TOTAL             = BENCHMARK.addMeasure("Total");
-
+    public static final int        LIGHTNING   = BENCHMARK.addMeasure("Lightning");
     /** Time */
-    public static final int        DISCOVERY         = BENCHMARK.addMeasure("Discovery");
+    public static final int        DISCOVERY   = BENCHMARK.addMeasure("Discovery");
     /** Label for result quality */
-    public static final int        UTILITY           = BENCHMARK.addMeasure("Utility");
+    public static final int        QUALITY     = BENCHMARK.addMeasure("Quality");
+
     /**
      * Main entry point
      * 
@@ -66,13 +65,13 @@ public class BenchmarkExperiment2 {
         
         // Init
         BENCHMARK.addAnalyzer(FLASH, new ValueBuffer());
-        BENCHMARK.addAnalyzer(TOTAL, new ValueBuffer());
+        BENCHMARK.addAnalyzer(LIGHTNING, new ValueBuffer());
         BENCHMARK.addAnalyzer(DISCOVERY, new ValueBuffer());
-        BENCHMARK.addAnalyzer(UTILITY, new ValueBuffer());
+        BENCHMARK.addAnalyzer(QUALITY, new ValueBuffer());
 
         // For each relevant combination
-        for (BenchmarkUtilityMeasure measure : getUtilityMeasures()) {
-            for (BenchmarkCriterion criterion : getCriteria()) {
+        for (BenchmarkQualityMeasure measure : getQualityMeasures()) {
+            for (BenchmarkPrivacyModel criterion : getPrivacyModels()) {
                 for (double suppressionLimit : getSuppressionLimits()) {
                     for (BenchmarkDataset dataset : getDatasets()) {
 
@@ -90,13 +89,13 @@ public class BenchmarkExperiment2 {
         }
     }
     /**
-     * Returns all criteria for this experiment
+     * Returns all privacy models for this experiment
      * @return
      */
-    public static BenchmarkCriterion[] getCriteria() {
-        return new BenchmarkCriterion[]{
-            BenchmarkCriterion.K_ANONYMITY,
-            BenchmarkCriterion.P_UNIQUENESS
+    public static BenchmarkPrivacyModel[] getPrivacyModels() {
+        return new BenchmarkPrivacyModel[]{
+            BenchmarkPrivacyModel.K_ANONYMITY,
+            BenchmarkPrivacyModel.P_UNIQUENESS
         };
     }
     /**
@@ -121,13 +120,13 @@ public class BenchmarkExperiment2 {
     }
 
     /**
-     * Returns all utility measures for this experiment
+     * Returns all quality measures for this experiment
      * @return
      */
-    public static BenchmarkUtilityMeasure[] getUtilityMeasures() {
-        return new BenchmarkUtilityMeasure[] { 
-                BenchmarkUtilityMeasure.AECS,
-                BenchmarkUtilityMeasure.LOSS
+    public static BenchmarkQualityMeasure[] getQualityMeasures() {
+        return new BenchmarkQualityMeasure[] { 
+                BenchmarkQualityMeasure.AECS,
+                BenchmarkQualityMeasure.LOSS
         };
     }
 
@@ -142,8 +141,8 @@ public class BenchmarkExperiment2 {
      * @throws IOException
      */
     private static void performExperiment(BenchmarkDataset dataset,
-                                          BenchmarkUtilityMeasure measure,
-                                          BenchmarkCriterion criterion,
+                                          BenchmarkQualityMeasure measure,
+                                          BenchmarkPrivacyModel criterion,
                                           double suppressionLimit) throws IOException {
 
         System.out.println("Performing experiment 2 - " + dataset + "/" + measure + "/" +criterion + "/" + suppressionLimit);
@@ -151,32 +150,34 @@ public class BenchmarkExperiment2 {
         // Measure execution time of FLASH
         double flash = Double.MAX_VALUE;
         for (int i = 0; i < REPETITIONS; i++) {
-            flash = Math.min(flash, BenchmarkEnvironment.performRun(BenchmarkAlgorithm.FLASH, dataset, measure, criterion, 0, suppressionLimit).executionTime);
+            flash = Math.min(flash, BenchmarkEnvironment.getBenchmarkResults(BenchmarkAlgorithm.FLASH, dataset, measure, criterion, 0, suppressionLimit).executionTime);
         }
         BENCHMARK.addValue(FLASH, flash);
 
-        // Measure total time of own
-        double total = Double.MAX_VALUE;
+        // Measure total time of lightning
+        double lightning = Double.MAX_VALUE;
         for (int i = 0; i < REPETITIONS; i++) {
-            total = Math.min(total, BenchmarkEnvironment.performRun(BenchmarkAlgorithm.LIGHTNING, dataset, measure, criterion, Integer.MAX_VALUE, suppressionLimit).executionTime);
+            lightning = Math.min(lightning, BenchmarkEnvironment.getBenchmarkResults(BenchmarkAlgorithm.LIGHTNING, dataset, measure, criterion, Integer.MAX_VALUE, suppressionLimit).executionTime);
         }
-        BENCHMARK.addValue(TOTAL, total);
+        BENCHMARK.addValue(LIGHTNING, lightning);
         
-        // Measure quality of own when executed with flash's timeLimit and discovery time
-        BenchmarkRun run = BenchmarkEnvironment.performRun(BenchmarkAlgorithm.LIGHTNING, dataset, measure, criterion, (int)flash, suppressionLimit);
-        double utility = run.informationLoss;
-        if (utility != -1) {
+        // Measure performance of lightning when executed with flash's time limit
+        double quality = -1;
+        double discovery = Double.MAX_VALUE;
+        for (int i = 0; i < REPETITIONS; i++) {
+            BenchmarkResults run = BenchmarkEnvironment.getBenchmarkResults(BenchmarkAlgorithm.LIGHTNING, dataset, measure, criterion, (int)flash, suppressionLimit);
+            if (run.informationLoss != -1 && run.discoveryTime < discovery) {
+                discovery = run.discoveryTime;
+                quality = run.informationLoss;
+            }
+        }
+        if (quality != -1) {
             double min = BenchmarkMetadata.getMinimalAndMaximalInformationLoss(dataset, measure, criterion, suppressionLimit)[0];
             double max = BenchmarkMetadata.getMinimalAndMaximalInformationLoss(dataset, measure, criterion, suppressionLimit)[1];
-            double old = utility;
-            utility = utility - min;
-            utility /= max-min;
-            if (utility < 0) {
-                System.out.println("Iloss out of bounds for " + BenchmarkAlgorithm.LIGHTNING + "/" + dataset + "/" + measure + "/" + criterion + ": " + old);
-            }
-            
+            quality = quality - min;
+            quality /= max-min;
         }
-        BENCHMARK.addValue(UTILITY, utility);
-        BENCHMARK.addValue(DISCOVERY, run.discoveryTime);        
+        BENCHMARK.addValue(QUALITY, quality);
+        BENCHMARK.addValue(DISCOVERY, discovery);        
     }
 }

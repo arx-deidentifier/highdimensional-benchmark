@@ -1,6 +1,6 @@
 /*
- * Source code of the experiments from our 2015 paper 
- * "Utility-driven anonymization of high-dimensional data"
+ * Source code of the experiments from our 2016 paper 
+ * "Lightning: Utility-driven anonymization of high-dimensional data"
  *      
  * Copyright (C) 2015 Fabian Prasser, Raffael Bild, Johanna Eicher, Helmut Spengler, Florian Kohlmayer
  * 
@@ -30,9 +30,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.deidentifier.arx.BenchmarkSetup.BenchmarkPrivacyModel;
+import org.deidentifier.arx.BenchmarkSetup.BenchmarkQualityMeasure;
 import org.deidentifier.arx.benchmark.BenchmarkExperiment3;
-import org.deidentifier.arx.benchmark.BenchmarkSetup.BenchmarkCriterion;
-import org.deidentifier.arx.benchmark.BenchmarkSetup.BenchmarkUtilityMeasure;
 
 import de.linearbits.objectselector.Selector;
 import de.linearbits.subframe.analyzer.Analyzer;
@@ -70,8 +70,8 @@ public class BenchmarkAnalysis3 {
         List<PlotGroup> groups = new ArrayList<PlotGroup>();
 
         // For each plot
-        for (BenchmarkCriterion criterion : BenchmarkExperiment3.getCriteria()) {
-            for (BenchmarkUtilityMeasure measure : BenchmarkExperiment3.getUtilityMeasures()) {
+        for (BenchmarkPrivacyModel criterion : BenchmarkExperiment3.getPrivacyModels()) {
+            for (BenchmarkQualityMeasure measure : BenchmarkExperiment3.getQualityMeasures()) {
                 for (double suppression : BenchmarkExperiment3.getSuppressionLimits()) {
                     groups.add(plot(file, criterion, measure, suppression));
                 }
@@ -92,8 +92,8 @@ public class BenchmarkAnalysis3 {
      * @throws ParseException 
      */
     private static PlotGroup plot(CSVFile file,
-                                  BenchmarkCriterion criterion,
-                                  BenchmarkUtilityMeasure measure,
+                                  BenchmarkPrivacyModel criterion,
+                                  BenchmarkQualityMeasure measure,
                                   double suppression) throws ParseException {
 
         // Plotting params
@@ -113,7 +113,7 @@ public class BenchmarkAnalysis3 {
         // Select
         Selector<String[]> selector = file.getSelectorBuilder()
                                           .field("Suppression limit").equals(String.valueOf(suppression)).and()
-                                          .field("Utility measure").equals(measure.toString()).and()
+                                          .field("Quality measure").equals(measure.toString()).and()
                                           .field("Privacy model").equals(criterion.toString())
                                           .build();
 
@@ -122,17 +122,17 @@ public class BenchmarkAnalysis3 {
                                        selector,
                                        new Field("Time", Analyzer.VALUE),
                                        new Field("", "Dataset"),
-                                       new Field("Utility", Analyzer.VALUE));
+                                       new Field("Quality", Analyzer.VALUE));
         
         // Pre-process
         makeClusterable(series);
         convertUnits(series);
 
         // Define plot group
-        Labels labels = new Labels("Execution time [s]", measure.toString()+" Utility [%]");
+        Labels labels = new Labels("Execution time [s]", measure.toString()+" Quality [%]");
         List<Plot<?>> plots = new ArrayList<Plot<?>>();
         plots.add(new PlotLinesClustered("", labels, series));
-        String caption = "Development of the utility of the SS13ACS dataset over time for " + criterion.toString()+ " with " + (suppression * 100d) + "\\% suppression (higher is better)";
+        String caption = "Development of the quality of the SS13ACS dataset over time for " + criterion.toString()+ " with " + (suppression * 100d) + "\\% suppression (higher is better)";
         return new PlotGroup(caption, plots, params, 1.0d);
     }
     

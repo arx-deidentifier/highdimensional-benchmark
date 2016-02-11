@@ -1,6 +1,6 @@
 /*
- * Source code of the experiments from our 2015 paper 
- * "Utility-driven anonymization of high-dimensional data"
+ * Source code of the experiments from our 2016 paper 
+ * "Lightning: Utility-driven anonymization of high-dimensional data"
  *      
  * Copyright (C) 2015 Fabian Prasser, Raffael Bild, Johanna Eicher, Helmut Spengler, Florian Kohlmayer
  * 
@@ -33,17 +33,18 @@ import org.deidentifier.arx.metric.MetricConfiguration;
  *
  * @author Fabian Prasser
  */
-public class MetricDataFly extends AbstractMetricSingleDimensional {
+public class DataFlyMetric extends AbstractMetricSingleDimensional {
 
     /** SVUID */
     private static final long serialVersionUID = 5349440837330821732L;
 
+    /** Hierarchies*/
     private GeneralizationHierarchy[] hierarchies;
 
     /**
      * Creates a new instance.
      */
-    public MetricDataFly() {
+    public DataFlyMetric() {
         super(false, false);
     }
 
@@ -63,12 +64,7 @@ public class MetricDataFly extends AbstractMetricSingleDimensional {
      * @return
      */
     public MetricConfiguration getConfiguration() {
-        return new MetricConfiguration(false, // monotonic
-                                       0.5d, // gs-factor
-                                       false, // precomputed
-                                       0.0d, // precomputation threshold
-                                       AggregateFunction.SUM // aggregate function
-        );
+        return new MetricConfiguration(false, 0.5d, false, 0.0d, AggregateFunction.SUM);
     }
 
     @Override

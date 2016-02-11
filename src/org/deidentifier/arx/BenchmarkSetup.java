@@ -1,6 +1,6 @@
 /*
- * Source code of the experiments from our 2015 paper 
- * "Utility-driven anonymization of high-dimensional data"
+ * Source code of the experiments from our 2016 paper 
+ * "Lightning: Utility-driven anonymization of high-dimensional data"
  *      
  * Copyright (C) 2015 Fabian Prasser, Raffael Bild, Johanna Eicher, Helmut Spengler, Florian Kohlmayer
  * 
@@ -17,7 +17,7 @@
  * limitations under the License.
  */
 
-package org.deidentifier.arx.benchmark;
+package org.deidentifier.arx;
 
 import java.io.IOException;
 
@@ -36,8 +36,8 @@ import org.deidentifier.arx.criteria.PopulationUniqueness;
 import org.deidentifier.arx.criteria.RecursiveCLDiversity;
 import org.deidentifier.arx.metric.Metric;
 import org.deidentifier.arx.metric.Metric.AggregateFunction;
-import org.deidentifier.arx.metric.v2.MetricDataFly;
-import org.deidentifier.arx.metric.v2.MetricIGreedy;
+import org.deidentifier.arx.metric.v2.DataFlyMetric;
+import org.deidentifier.arx.metric.v2.IGreedyMetric;
 
 /**
  * This class encapsulates most of the parameters of a benchmark run
@@ -82,7 +82,7 @@ public class BenchmarkSetup {
         }
     }
 
-    public static enum BenchmarkCriterion {
+    public static enum BenchmarkPrivacyModel {
         K_ANONYMITY {
             @Override
             public String toString() {
@@ -172,7 +172,7 @@ public class BenchmarkSetup {
         }
     }
 
-    public static enum BenchmarkUtilityMeasure {
+    public static enum BenchmarkQualityMeasure {
         AECS {
             @Override
             public String toString() {
@@ -199,9 +199,9 @@ public class BenchmarkSetup {
      * @throws IOException
      */
     public static ARXConfiguration getConfiguration(BenchmarkDataset dataset, 
-                                                    BenchmarkUtilityMeasure utility,
+                                                    BenchmarkQualityMeasure utility,
                                                     BenchmarkAlgorithm algorithm,
-                                                    BenchmarkCriterion criterion) throws IOException {
+                                                    BenchmarkPrivacyModel criterion) throws IOException {
         
         ARXConfiguration config = ARXConfiguration.create();
         config.setMetric(Metric.createEntropyMetric(true));
@@ -230,12 +230,61 @@ public class BenchmarkSetup {
         }
 
         if (algorithm == BenchmarkAlgorithm.DATAFLY) {
-            config.setMetric(new MetricDataFly());
+            config.setMetric(new DataFlyMetric());
         } else if (algorithm == BenchmarkAlgorithm.IGREEDY) {
-            config.setMetric(new MetricIGreedy());
-        } else if (utility == BenchmarkUtilityMeasure.LOSS){
+            config.setMetric(new IGreedyMetric());
+        } else if (utility == BenchmarkQualityMeasure.LOSS){
             config.setMetric(Metric.createLossMetric(AggregateFunction.GEOMETRIC_MEAN));
-        } else if (utility == BenchmarkUtilityMeasure.AECS){
+        } else if (utility == BenchmarkQualityMeasure.AECS){
+            config.setMetric(Metric.createAECSMetric());
+        } else {
+            throw new IllegalArgumentException("Unknown utility measure");
+        }
+
+        return config;
+    }
+
+    /**
+     * Returns a configuration for the ARX framework
+     * @param dataset
+     * @param utility
+     * @param algorithm
+     * @param criterion
+     * @return
+     * @throws IOException
+     */
+    public static ARXConfiguration getConfiguration(BenchmarkDataset dataset, 
+                                                    BenchmarkQualityMeasure utility,
+                                                    BenchmarkPrivacyModel criterion) throws IOException {
+        
+        ARXConfiguration config = ARXConfiguration.create();
+        config.setMetric(Metric.createEntropyMetric(true));
+        config.setMaxOutliers(1d);
+
+        switch (criterion) {
+        case D_PRESENCE:
+            config.addCriterion(new DPresence(0.05d, 0.15d, getResearchSubset(dataset)));
+            break;
+        case K_ANONYMITY:
+            config.addCriterion(new KAnonymity(5));
+            break;
+        case L_DIVERSITY:
+            String sensitive = getSensitiveAttribute(dataset);
+            config.addCriterion(new RecursiveCLDiversity(sensitive, 4, 3));
+            break;
+        case T_CLOSENESS:
+            sensitive = getSensitiveAttribute(dataset);
+            config.addCriterion(new HierarchicalDistanceTCloseness(sensitive, 0.2d, getHierarchy(dataset, sensitive)));
+            break;
+        case P_UNIQUENESS:
+            config.addCriterion(new PopulationUniqueness(0.01d, ARXPopulationModel.create(Region.USA), ARXSolverConfiguration.create().startValues(SOLVER_START_VALUES)));
+            break;
+        default:
+            throw new RuntimeException("Invalid criterion");
+        }
+        if (utility == BenchmarkQualityMeasure.LOSS){
+            config.setMetric(Metric.createLossMetric(AggregateFunction.GEOMETRIC_MEAN));
+        } else if (utility == BenchmarkQualityMeasure.AECS){
             config.setMetric(Metric.createAECSMetric());
         } else {
             throw new IllegalArgumentException("Unknown utility measure");
@@ -262,7 +311,7 @@ public class BenchmarkSetup {
      * @throws IOException
      */
     public static Data getData(BenchmarkDataset dataset, 
-                               BenchmarkCriterion criterion) throws IOException {
+                               BenchmarkPrivacyModel criterion) throws IOException {
         return getData(dataset, criterion, Integer.MAX_VALUE);
     }
     
@@ -276,7 +325,7 @@ public class BenchmarkSetup {
      */
     @SuppressWarnings("incomplete-switch")
     public static Data getData(BenchmarkDataset dataset, 
-                               BenchmarkCriterion criterion,
+                               BenchmarkPrivacyModel criterion,
                                int qiCount) throws IOException {
         Data data = null;
         switch (dataset) {
@@ -360,10 +409,10 @@ public class BenchmarkSetup {
      * @param measure
      * @return
      */
-    public static Metric<?> getMeasure(BenchmarkUtilityMeasure measure) {
-        if (measure == BenchmarkUtilityMeasure.AECS) {
+    public static Metric<?> getMeasure(BenchmarkQualityMeasure measure) {
+        if (measure == BenchmarkQualityMeasure.AECS) {
             return Metric.createAECSMetric();
-        } else if (measure == BenchmarkUtilityMeasure.LOSS) {
+        } else if (measure == BenchmarkQualityMeasure.LOSS) {
             return Metric.createLossMetric();
         }
         throw new RuntimeException("Invalid measure");

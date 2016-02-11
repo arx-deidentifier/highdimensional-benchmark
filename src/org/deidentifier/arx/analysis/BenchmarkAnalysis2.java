@@ -1,6 +1,6 @@
 /*
- * Source code of the experiments from our 2015 paper 
- * "Utility-driven anonymization of high-dimensional data"
+ * Source code of the experiments from our 2016 paper 
+ * "Lightning: Utility-driven anonymization of high-dimensional data"
  *      
  * Copyright (C) 2015 Fabian Prasser, Raffael Bild, Johanna Eicher, Helmut Spengler, Florian Kohlmayer
  * 
@@ -25,9 +25,9 @@ import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.util.Iterator;
 
+import org.deidentifier.arx.BenchmarkSetup.BenchmarkPrivacyModel;
+import org.deidentifier.arx.BenchmarkSetup.BenchmarkQualityMeasure;
 import org.deidentifier.arx.benchmark.BenchmarkExperiment2;
-import org.deidentifier.arx.benchmark.BenchmarkSetup.BenchmarkCriterion;
-import org.deidentifier.arx.benchmark.BenchmarkSetup.BenchmarkUtilityMeasure;
 
 import de.linearbits.objectselector.Selector;
 import de.linearbits.subframe.analyzer.Analyzer;
@@ -52,14 +52,18 @@ public class BenchmarkAnalysis2 {
         CSVFile file = new CSVFile(new File("results/experiment2.csv"));
 
         // For each plot
-        for (BenchmarkUtilityMeasure measure : BenchmarkExperiment2.getUtilityMeasures()) {
-            System.out.println("Measure: " + measure);
+        for (BenchmarkQualityMeasure measure : BenchmarkExperiment2.getQualityMeasures()) {
             for (double suppression : BenchmarkExperiment2.getSuppressionLimits()) {
-                System.out.println(" - Suppression: " + String.valueOf(suppression));
-                for (BenchmarkCriterion criterion : BenchmarkExperiment2.getCriteria()) {
-                    System.out.println("   - Criterion: " + criterion);
-                    System.out.format("     - %-30s%-30s%-30s%-30s%-30s\n", new Object[]{"Dataset", "Flash", "Total", "Discovery", "Utility"});
-                    analyze(file, measure, suppression, criterion); 
+                for (BenchmarkPrivacyModel model : BenchmarkExperiment2.getPrivacyModels()) {
+                    System.out.println("----------------------");
+                    System.out.println("Privacy model: " + model);
+                    System.out.println("Quality measure: " + measure);
+                    System.out.println("Suppression limit: " + String.valueOf(suppression));
+                    System.out.println("----------------------");
+                    System.out.println("");
+                    System.out.format("%-30s%-30s%-30s%-30s%-30s\n", new Object[]{"Dataset", "Flash", "Lightning", "Discovery", "Quality"});
+                    analyze(file, measure, suppression, model);
+                    System.out.println("");
                 }
             }
         }
@@ -75,14 +79,14 @@ public class BenchmarkAnalysis2 {
      * @throws ParseException 
      */
     private static void analyze(CSVFile file,
-                                BenchmarkUtilityMeasure measure,
+                                BenchmarkQualityMeasure measure,
                                 double suppression,
-                                BenchmarkCriterion criterion) throws ParseException {
+                                BenchmarkPrivacyModel criterion) throws ParseException {
 
         // Select
         Selector<String[]> selector = file.getSelectorBuilder()
                                           .field("Suppression limit").equals(String.valueOf(suppression)).and()
-                                          .field("Utility measure").equals(measure.toString()).and()
+                                          .field("Quality measure").equals(measure.toString()).and()
                                           .field("Privacy model").equals(criterion.toString())
                                           .build();
 
@@ -92,11 +96,11 @@ public class BenchmarkAnalysis2 {
             if (selector.isSelected(line.getData())) {
                 
                 double flash = Double.valueOf(format(Double.valueOf(line.get("Flash", Analyzer.VALUE)) / 1000d));
-                double total = Double.valueOf(format(Double.valueOf(line.get("Total", Analyzer.VALUE)) / 1000d));
+                double total = Double.valueOf(format(Double.valueOf(line.get("Lightning", Analyzer.VALUE)) / 1000d));
                 
                 String discovery = "--";
                 String utility = "--"; 
-                double _utility = Double.valueOf(format(Double.valueOf(line.get("Utility", Analyzer.VALUE)) * 100d));
+                double _utility = Double.valueOf(format(Double.valueOf(line.get("Quality", Analyzer.VALUE)) * 100d));
                 if (_utility != -100d) {
                     utility = format(100d - _utility);
                     discovery = format(Double.valueOf(format(Double.valueOf(line.get("Discovery", Analyzer.VALUE)) / 1000d)));
@@ -107,7 +111,7 @@ public class BenchmarkAnalysis2 {
                                                format(total),
                                                discovery,
                                                utility};
-                System.out.format("     - %-30s%-30s%-30s%-30s%-30s\n", output);
+                System.out.format("%-30s%-30s%-30s%-30s%-30s\n", output);
             }
         }
     }

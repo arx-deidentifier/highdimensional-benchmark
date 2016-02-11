@@ -1,6 +1,6 @@
 /*
- * Source code of the experiments from our 2015 paper 
- * "Utility-driven anonymization of high-dimensional data"
+ * Source code of the experiments from our 2016 paper 
+ * "Lightning: Utility-driven anonymization of high-dimensional data"
  *      
  * Copyright (C) 2015 Fabian Prasser, Raffael Bild, Johanna Eicher, Helmut Spengler, Florian Kohlmayer
  * 
@@ -30,7 +30,7 @@ import cern.colt.list.DoubleArrayList;
  * 
  * @author Fabian Prasser
  */
-public abstract class BenchmarkAlgorithm extends AbstractAlgorithm {
+public abstract class AlgorithmBenchmark extends AbstractAlgorithm {
 
     /** Start time of the search process */
     private long            time        = 0;
@@ -46,7 +46,7 @@ public abstract class BenchmarkAlgorithm extends AbstractAlgorithm {
      * @param arg0
      * @param arg1
      */
-    protected BenchmarkAlgorithm(SolutionSpace arg0, NodeChecker arg1) {
+    protected AlgorithmBenchmark(SolutionSpace arg0, NodeChecker arg1) {
         super(arg0, arg1);
     }
 

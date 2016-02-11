@@ -1,5 +1,5 @@
-;;;;Time;Utility;Complete
-Utility measure;Privacy model;Suppression limit;Dataset;Value;Value;Value
+;;;;Time;Quality;Complete
+Quality measure;Privacy model;Suppression limit;Dataset;Value;Value;Value
 AECS;(5)-anonymity;0.0;SS13ACS_15;855.0;1.0;false
 AECS;(5)-anonymity;0.0;SS13ACS_20;3133.0;0.0;false
 AECS;(5)-anonymity;0.0;SS13ACS_20;69032.0;0.4412790697674418;false

@@ -1,5 +1,5 @@
-;;;;Own;DataFly;IGreedy
-Utility measure;Suppression limit;Privacy model;Dataset;Value;Value;Value
+;;;;Lightning;DataFly;IGreedy
+Quality measure;Suppression limit;Privacy model;Dataset;Value;Value;Value
 AECS;0.0;(5)-anonymity;ADULT;0.03655913978494624;0.03655913978494624;0.03655913978494624
 AECS;0.0;(5)-anonymity;CUP;0.052631578947368425;0.052631578947368425;0.052631578947368425
 AECS;0.0;(5)-anonymity;FARS;0.0074822297044519264;0.0074822297044519264;0.0074822297044519264

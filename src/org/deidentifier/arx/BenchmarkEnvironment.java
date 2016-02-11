@@ -1,6 +1,6 @@
 /*
- * Source code of the experiments from our 2015 paper 
- * "Utility-driven anonymization of high-dimensional data"
+ * Source code of the experiments from our 2016 paper 
+ * "Lightning: Utility-driven anonymization of high-dimensional data"
  *      
  * Copyright (C) 2015 Fabian Prasser, Raffael Bild, Johanna Eicher, Helmut Spengler, Florian Kohlmayer
  * 
@@ -22,26 +22,28 @@ package org.deidentifier.arx;
 import java.io.IOException;
 import java.util.HashMap;
 
+import org.deidentifier.arx.BenchmarkSetup.BenchmarkAlgorithm;
+import org.deidentifier.arx.BenchmarkSetup.BenchmarkPrivacyModel;
+import org.deidentifier.arx.BenchmarkSetup.BenchmarkDataset;
+import org.deidentifier.arx.BenchmarkSetup.BenchmarkQualityMeasure;
+import org.deidentifier.arx.algorithm.AlgorithmBenchmark;
 import org.deidentifier.arx.algorithm.AlgorithmFlash;
 import org.deidentifier.arx.algorithm.AlgorithmLightning;
 import org.deidentifier.arx.algorithm.AlgorithmMinimal;
 import org.deidentifier.arx.algorithm.FLASHStrategy;
-import org.deidentifier.arx.benchmark.BenchmarkSetup;
-import org.deidentifier.arx.benchmark.BenchmarkSetup.BenchmarkAlgorithm;
-import org.deidentifier.arx.benchmark.BenchmarkSetup.BenchmarkCriterion;
-import org.deidentifier.arx.benchmark.BenchmarkSetup.BenchmarkDataset;
-import org.deidentifier.arx.benchmark.BenchmarkSetup.BenchmarkUtilityMeasure;
 import org.deidentifier.arx.framework.check.NodeChecker;
+import org.deidentifier.arx.framework.check.NodeChecker.Result;
 import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction;
 import org.deidentifier.arx.framework.data.DataManager;
 import org.deidentifier.arx.framework.data.Dictionary;
 import org.deidentifier.arx.framework.lattice.SolutionSpace;
+import org.deidentifier.arx.metric.v2.ILMultiDimensionalGeometricMean;
 
 import cern.colt.list.DoubleArrayList;
 
 /**
- * Creates a benchmarking environment consisting of a solution space, node checked, data manager etc. Furthermore,
- * initializes all configuration files
+ * Creates a benchmarking environment consisting of a solution space, 
+ * node checked, data manager etc. Furthermore, initializes all configuration files
  * 
  * @author Fabian Prasser
  */
@@ -51,7 +53,7 @@ public class BenchmarkEnvironment {
      * The result of one benchmark run
      * @author Fabian Prasser
      */
-    public static final class BenchmarkRun {
+    public static final class BenchmarkResults {
 
         /** Execution time */
         public final double          executionTime;
@@ -68,7 +70,7 @@ public class BenchmarkEnvironment {
          * @param informationLoss
          * @param discoveryTime
          */
-        public BenchmarkRun(double executionTime, double informationLoss, double discoveryTime, DoubleArrayList trackRecord) {
+        public BenchmarkResults(double executionTime, double informationLoss, double discoveryTime, DoubleArrayList trackRecord) {
             this.executionTime = executionTime;
             this.informationLoss = informationLoss;
             this.discoveryTime = discoveryTime;
@@ -87,6 +89,7 @@ public class BenchmarkEnvironment {
 
     /**
      * Internal method
+     * 
      * @param algorithm
      * @param dataset
      * @param measure
@@ -96,18 +99,18 @@ public class BenchmarkEnvironment {
      * @return
      * @throws IOException
      */
-    public static BenchmarkRun performRun(BenchmarkAlgorithm algorithm,
-                                          BenchmarkDataset dataset,
-                                          BenchmarkUtilityMeasure measure,
-                                          BenchmarkCriterion criterion,
-                                          int timeLimit,
-                                          double suppressionLimit) throws IOException {
+    public static BenchmarkResults getBenchmarkResults(BenchmarkAlgorithm algorithm,
+                                                       BenchmarkDataset dataset,
+                                                       BenchmarkQualityMeasure measure,
+                                                       BenchmarkPrivacyModel criterion,
+                                                       int timeLimit,
+                                                       double suppressionLimit) throws IOException {
 
         // Create environment
         BenchmarkEnvironment environment = new BenchmarkEnvironment(algorithm, dataset, measure, criterion, suppressionLimit);
 
         // Create an algorithm instance
-        org.deidentifier.arx.algorithm.BenchmarkAlgorithm implementation;
+        AlgorithmBenchmark implementation;
         switch (algorithm) {
         case DATAFLY:
         case IGREEDY:
@@ -134,33 +137,95 @@ public class BenchmarkEnvironment {
         double discovery = implementation.getDiscoveryTime();
         DoubleArrayList trackRecord = implementation.getTrackRecord();
 
-        // Return if possible
-        if ((algorithm != BenchmarkAlgorithm.DATAFLY && algorithm != BenchmarkAlgorithm.IGREEDY) || implementation.getGlobalOptimum() == null) {
-            double iloss = -1d;
-            if (implementation.getGlobalOptimum() != null) {
-                iloss = Double.valueOf( implementation.getGlobalOptimum().getInformationLoss().toString());
-            }
-            return new BenchmarkRun(time, iloss, discovery, trackRecord); 
+        // Define the resulting information loss
+        double iloss = -1;
+        
+        // If no result was found, return immediately
+        if (implementation.getGlobalOptimum() == null) {
+            return new BenchmarkResults(time, iloss, discovery, trackRecord); 
         }
 
-        // Else repeat process to convert information loss
-        int[] optimum = implementation.getGlobalOptimum().getGeneralization();
-        environment = new BenchmarkEnvironment(BenchmarkAlgorithm.FLASH, dataset, measure, criterion, suppressionLimit);
-        double iloss = -1d;
-        if (implementation.getGlobalOptimum() != null) {
-            iloss = Double.valueOf(environment.checker.check(environment.solutions.getTransformation(optimum)).informationLoss.toString());
+        // Potentially convert results
+        if (algorithm == BenchmarkAlgorithm.IGREEDY || algorithm == BenchmarkAlgorithm.DATAFLY) {
+            
+            // If IGreedy or DataFly, compute information loss in terms of the given quality model
+            int[] optimum = implementation.getGlobalOptimum().getGeneralization();
+            iloss = getInformationLoss(dataset, measure, criterion, suppressionLimit, optimum);
+        } else {
+            
+            // If lightning or flash
+            iloss = Double.valueOf( implementation.getGlobalOptimum().getInformationLoss().toString());
         }
-        return new BenchmarkRun(time, iloss, discovery, trackRecord);
+        
+        // Return result
+        return new BenchmarkResults(time, iloss, discovery, trackRecord);
+    }
+
+    /**
+     * Returns the resulting utility value as a double
+     * @param dataset
+     * @param measure
+     * @param criterion
+     * @param suppressionLimit
+     * @return
+     * @throws IOException 
+     */
+    public static double[] getMinimalAndMaximalInformationLoss(BenchmarkDataset dataset,
+                                                                BenchmarkQualityMeasure measure,
+                                                                BenchmarkPrivacyModel criterion,
+                                                                double suppressionLimit) throws IOException {
+
+        // Create environment
+        BenchmarkEnvironment environment = new BenchmarkEnvironment(BenchmarkAlgorithm.FLASH, dataset, measure, criterion, suppressionLimit);
+        
+        // For each transformation
+        double min = Double.MAX_VALUE;
+        double max = - Double.MAX_VALUE;
+        
+        for (int i = 0; i <= environment.solutions.getTop().getIdentifier(); i++) {
+            Result result = environment.checker.check(environment.solutions.getTransformation(i));
+            if (result.privacyModelFulfilled) {
+                double value = 0d;
+                if (result.informationLoss instanceof ILMultiDimensionalGeometricMean) {
+                    value = Double.valueOf(((ILMultiDimensionalGeometricMean) result.informationLoss).toString());
+                } else {
+                    value = (Double) result.informationLoss.getValue();
+                }
+                min = Math.min(min, value);
+                max = Math.max(max, value);
+            }
+        }
+        return new double[]{min, max};
+    }
+    
+    /**
+     * Returns the information loss for the given transformation
+     * @param dataset
+     * @param measure
+     * @param criterion
+     * @param suppressionLimit
+     * @param transformation
+     * @return
+     * @throws IOException 
+     */
+    private static double getInformationLoss(BenchmarkDataset dataset,
+                                             BenchmarkQualityMeasure measure,
+                                             BenchmarkPrivacyModel criterion,
+                                             double suppressionLimit,
+                                             int[] transformation) throws IOException {
+
+        BenchmarkEnvironment environment = new BenchmarkEnvironment(BenchmarkAlgorithm.FLASH, dataset, measure, criterion, suppressionLimit);
+        return Double.valueOf(environment.checker.check(environment.solutions.getTransformation(transformation)).informationLoss.toString());
     }
 
     /** Variable*/
-    public final SolutionSpace solutions;
+    private final SolutionSpace solutions;
 
     /** Variable*/
-    public final NodeChecker checker;
+    private final NodeChecker checker;
 
     /** Variable*/
-    public final DataManager manager;
+    private final DataManager manager;
 
     /**
      * Creates a new instance
@@ -171,10 +236,10 @@ public class BenchmarkEnvironment {
      * @param suppressionLimit
      * @throws IOException
      */
-    public BenchmarkEnvironment(BenchmarkAlgorithm algorithm,
+    private BenchmarkEnvironment(BenchmarkAlgorithm algorithm,
                                 BenchmarkDataset dataset,
-                                BenchmarkUtilityMeasure measure,
-                                BenchmarkCriterion criterion,
+                                BenchmarkQualityMeasure measure,
+                                BenchmarkPrivacyModel criterion,
                                 double suppressionLimit) throws IOException {
         
         // Prepare
