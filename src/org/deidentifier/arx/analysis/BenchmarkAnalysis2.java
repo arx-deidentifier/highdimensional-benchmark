@@ -95,25 +95,51 @@ public class BenchmarkAnalysis2 {
             CSVLine line = iter.next();
             if (selector.isSelected(line.getData())) {
                 
-                double flash = Double.valueOf(format(Double.valueOf(line.get("Flash", Analyzer.VALUE)) / 1000d));
-                double total = Double.valueOf(format(Double.valueOf(line.get("Lightning", Analyzer.VALUE)) / 1000d));
+                // Read values
+                double _flash = getValue(line, "Flash", 1d / 1000d);
+                double _lightning = getValue(line, "Lightning", 1d / 1000d);
+                double _utility = getValue(line, "Quality", 100d);
                 
+                // Convert to strings
                 String discovery = "--";
                 String utility = "--"; 
-                double _utility = Double.valueOf(format(Double.valueOf(line.get("Quality", Analyzer.VALUE)) * 100d));
+                String flash = null;
+                String lightning = null;
                 if (_utility != -100d) {
                     utility = format(100d - _utility);
-                    discovery = format(Double.valueOf(format(Double.valueOf(line.get("Discovery", Analyzer.VALUE)) / 1000d)));
+                    discovery = format(getValue(line, "Discovery", 1d / 1000d));
+                }
+                flash = format(_flash);
+                lightning = format(_lightning);
+
+                // Discovery and total time of lightning are potentially measured in different benchmark runs.
+                // Due to fluctuations in the JVM execution times, discovery can thus be
+                // a bit larger than total time, when they are actually identical. 
+                // We handle this special case here.
+                if (!discovery.equals("--") && Double.valueOf(discovery) > Double.valueOf(_lightning)) {
+                    discovery = format(_lightning);
                 }
                 
+                // Print
                 Object[] output = new String[]{line.get("", "Dataset"),
-                                               format(flash),
-                                               format(total),
+                                               flash,
+                                               lightning,
                                                discovery,
                                                utility};
                 System.out.format("%-30s%-30s%-30s%-30s%-30s\n", output);
             }
         }
+    }
+    
+    /**
+     * Returns a field value multiplied with the given factor. Performs some rounding
+     * @param line
+     * @param field
+     * @param factor
+     * @return
+     */
+    private static double getValue(CSVLine line, String field, double factor) {
+        return Double.valueOf(format(Double.valueOf(line.get(field, Analyzer.VALUE)) * factor));
     }
 
     /**

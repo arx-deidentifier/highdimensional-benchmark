@@ -105,26 +105,26 @@ public class BenchmarkAnalysis1 {
                                           .build();
 
         // Iterate
-        double own = 1d;
+        double lightning = 1d;
         double datafly = 1d;
         double igreedy = 1d;
         for (Iterator<CSVLine> iter = file.iterator(); iter.hasNext(); ) {
             CSVLine line = iter.next();
             if (selector.isSelected(line.getData())) {
-                own *= Double.valueOf(line.get("Lightning", Analyzer.VALUE)) + 1d;
+                lightning *= Double.valueOf(line.get("Lightning", Analyzer.VALUE)) + 1d;
                 datafly *= Double.valueOf(line.get("DataFly", Analyzer.VALUE)) + 1d;
                 igreedy *= Double.valueOf(line.get("IGreedy", Analyzer.VALUE)) + 1d; 
             }
         }
         
-        own = Double.valueOf(format((Math.pow(own, 1d/5d) - 1d) * 100d));
+        lightning = Double.valueOf(format((Math.pow(lightning, 1d/5d) - 1d) * 100d));
         datafly = Double.valueOf(format((Math.pow(datafly, 1d/5d) - 1d) * 100d));
         igreedy = Double.valueOf(format((Math.pow(igreedy, 1d/5d) - 1d) * 100d));
         
         Object[] output = new String[]{criterion.toString(),
-                                       format(own, own, datafly, igreedy),
-                                       format(datafly, own, datafly, igreedy),
-                                       format(igreedy, own, datafly, igreedy)};
+                                       format(lightning, lightning, datafly, igreedy),
+                                       format(datafly, lightning, datafly, igreedy),
+                                       format(igreedy, lightning, datafly, igreedy)};
         System.out.format("   - %-30s%-30s%-30s%-30s\n", output);
         
     }
