@@ -71,9 +71,6 @@ public class BenchmarkExperiment3 {
                 for (double suppressionLimit : getSuppressionLimits()) {
                     for (BenchmarkDataset dataset : getDatasets()) {
 
-                        // Run
-                        BENCHMARK.addRun(measure.toString(), criterion.toString(), String.valueOf(suppressionLimit), dataset.toString());
-                        
                         // Measurements
                         performExperiment(dataset, measure, criterion, suppressionLimit);
                         
@@ -164,10 +161,10 @@ public class BenchmarkExperiment3 {
             if (utility == -0d) utility = +0d;
             if (utility != previous) {
                 previous = utility; 
+                BENCHMARK.addRun(measure.toString(), criterion.toString(), String.valueOf(suppressionLimit), dataset.toString());
                 BENCHMARK.addValue(TIME, trackRecord.get(i));
                 BENCHMARK.addValue(QUALITY, utility);
                 BENCHMARK.addValue(COMPLETE, complete);
-                BENCHMARK.addRun(measure.toString(), criterion.toString(), String.valueOf(suppressionLimit), dataset.toString());
             }
         }
     }
