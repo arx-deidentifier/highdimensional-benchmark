@@ -142,20 +142,31 @@ public class BenchmarkExperiment3 {
         
         System.out.println("Performing experiment 3 - " + dataset + "/" + measure + "/" +criterion + "/" + suppressionLimit);
         
+        // Perform
         BenchmarkResults run = BenchmarkEnvironment.getBenchmarkResults(BenchmarkAlgorithm.LIGHTNING, dataset, measure, criterion, 600 * 1000, suppressionLimit);
         DoubleArrayList trackRecord = run.trackRecord;
+        
+        // Check if completed
         boolean complete = run.executionTime < 600 * 1000;
         
+        // Min and max
         double min = trackRecord.get(1);
         double max = trackRecord.get(trackRecord.size()-1);
 
+        // For each step
+        double previous = Double.MAX_VALUE;
         for (int i = 0; i < trackRecord.size(); i += 2) {
+            
+            // Normalize
             double utility = min == max ? 1d : (trackRecord.get(i + 1) - min) / (max - min);
+            
+            // Ignore steps in which utility did not change
             if (utility == -0d) utility = +0d;
-            BENCHMARK.addValue(TIME, trackRecord.get(i));
-            BENCHMARK.addValue(QUALITY, utility);
-            BENCHMARK.addValue(COMPLETE, complete);
-            if (i < trackRecord.size() - 2) {
+            if (utility != previous) {
+                previous = utility; 
+                BENCHMARK.addValue(TIME, trackRecord.get(i));
+                BENCHMARK.addValue(QUALITY, utility);
+                BENCHMARK.addValue(COMPLETE, complete);
                 BENCHMARK.addRun(measure.toString(), criterion.toString(), String.valueOf(suppressionLimit), dataset.toString());
             }
         }
