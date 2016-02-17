@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -158,6 +159,39 @@ public class BenchmarkAnalysis3 {
      * @param series
      */
     private static void makeClusterable(Series3D series) {
+
+        // Sort
+        Collections.sort(series.getData(), new Comparator<Point3D>() {
+            @Override
+            public int compare(Point3D o1, Point3D o2) {
+                int cluster = o1.y.compareTo(o2.y);
+                if (cluster != 0) {
+                    return cluster;
+                }
+                int cmpX = Double.valueOf(o1.x).compareTo(Double.valueOf(o2.x));
+                int cmpZ = Double.valueOf(o1.z).compareTo(Double.valueOf(o2.z));
+                if (cmpX != 0) {
+                    return cmpX;
+                } else {
+                    return cmpZ;
+                }
+            }            
+        });
+        
+        // For very small datasets it may be the case that two events are
+        // Reported for the same timestamp to due ms resolution
+        // In this case, we simply remove the smaller value
+        Iterator<Point3D> iter = series.getData().iterator();
+        double previousX = -1d;
+        while (iter.hasNext()) {
+            Point3D next = iter.next();
+            double nextX = Double.valueOf(next.x);
+            if (nextX == previousX) {
+                iter.remove();
+            } else {
+                previousX = nextX;
+            }
+        }
         
         // Prepare
         List<Double> xvalues = new ArrayList<Double>();
@@ -197,7 +231,13 @@ public class BenchmarkAnalysis3 {
                 if (cluster != 0) {
                     return cluster;
                 }
-                return Double.valueOf(o1.x).compareTo(Double.valueOf(o2.x));
+                int cmpX = Double.valueOf(o1.x).compareTo(Double.valueOf(o2.x));
+                int cmpZ = Double.valueOf(o1.z).compareTo(Double.valueOf(o2.z));
+                if (cmpX != 0) {
+                    return cmpX;
+                } else {
+                    return cmpZ;
+                }
             }            
         });
     }
