@@ -23,11 +23,11 @@ import java.io.File;
 import java.io.IOException;
 
 import org.deidentifier.arx.BenchmarkEnvironment;
-import org.deidentifier.arx.BenchmarkSetup.BenchmarkAlgorithm;
-import org.deidentifier.arx.BenchmarkSetup.BenchmarkPrivacyModel;
-import org.deidentifier.arx.BenchmarkSetup.BenchmarkDataset;
-import org.deidentifier.arx.BenchmarkSetup.BenchmarkQualityMeasure;
 import org.deidentifier.arx.BenchmarkMetadata;
+import org.deidentifier.arx.BenchmarkSetup.BenchmarkAlgorithm;
+import org.deidentifier.arx.BenchmarkSetup.BenchmarkDataset;
+import org.deidentifier.arx.BenchmarkSetup.BenchmarkPrivacyModel;
+import org.deidentifier.arx.BenchmarkSetup.BenchmarkQualityMeasure;
 
 import de.linearbits.subframe.Benchmark;
 import de.linearbits.subframe.analyzer.ValueBuffer;
@@ -125,7 +125,10 @@ public class BenchmarkExperiment1 {
     public static BenchmarkQualityMeasure[] getUtilityMeasures() {
         return new BenchmarkQualityMeasure[] { 
                 BenchmarkQualityMeasure.AECS,
-                BenchmarkQualityMeasure.LOSS
+                BenchmarkQualityMeasure.LOSS,
+                BenchmarkQualityMeasure.DISCERNIBILITY,
+                BenchmarkQualityMeasure.ENTROPY,
+                BenchmarkQualityMeasure.PRECISION
         };
     }
 

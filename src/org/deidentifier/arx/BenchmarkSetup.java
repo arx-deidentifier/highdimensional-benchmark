@@ -185,6 +185,24 @@ public class BenchmarkSetup {
                 return "Loss";
             }
         },
+        ENTROPY {
+            @Override
+            public String toString() {
+                return "Non-uniform entropy";
+            }
+        },
+        PRECISION {
+            @Override
+            public String toString() {
+                return "Precision";
+            }
+        },
+        DISCERNIBILITY {
+            @Override
+            public String toString() {
+                return "Discernibility";
+            }
+        }
     }
 
     private static final double[][] SOLVER_START_VALUES = getSolverStartValues();
@@ -237,10 +255,15 @@ public class BenchmarkSetup {
             config.setMetric(Metric.createLossMetric(AggregateFunction.GEOMETRIC_MEAN));
         } else if (utility == BenchmarkQualityMeasure.AECS){
             config.setMetric(Metric.createAECSMetric());
+        } else if (utility == BenchmarkQualityMeasure.ENTROPY){
+            config.setMetric(Metric.createEntropyMetric(false, AggregateFunction.SUM));
+        } else if (utility == BenchmarkQualityMeasure.PRECISION){
+            config.setMetric(Metric.createPrecisionMetric(false));
+        } else if (utility == BenchmarkQualityMeasure.DISCERNIBILITY){
+            config.setMetric(Metric.createDiscernabilityMetric(false));
         } else {
             throw new IllegalArgumentException("Unknown utility measure");
         }
-
         return config;
     }
 
@@ -286,6 +309,13 @@ public class BenchmarkSetup {
             config.setMetric(Metric.createLossMetric(AggregateFunction.GEOMETRIC_MEAN));
         } else if (utility == BenchmarkQualityMeasure.AECS){
             config.setMetric(Metric.createAECSMetric());
+        } else if (utility == BenchmarkQualityMeasure.ENTROPY){
+            config.setMetric(Metric.createEntropyMetric(false, AggregateFunction.SUM));
+        } else if (utility == BenchmarkQualityMeasure.PRECISION){
+            config.setMetric(Metric.createPrecisionMetric(false));
+        } else if (utility == BenchmarkQualityMeasure.DISCERNIBILITY){
+            config.setMetric(Metric.createDiscernabilityMetric(false));
+            
         } else {
             throw new IllegalArgumentException("Unknown utility measure");
         }
@@ -414,6 +444,12 @@ public class BenchmarkSetup {
             return Metric.createAECSMetric();
         } else if (measure == BenchmarkQualityMeasure.LOSS) {
             return Metric.createLossMetric();
+        } else if (measure == BenchmarkQualityMeasure.ENTROPY) {
+            return Metric.createEntropyMetric(false, AggregateFunction.SUM);
+        } else if (measure == BenchmarkQualityMeasure.PRECISION) {
+            return Metric.createPrecisionMetric(false);
+        } else if (measure == BenchmarkQualityMeasure.DISCERNIBILITY) { 
+            return Metric.createDiscernabilityMetric(false); 
         }
         throw new RuntimeException("Invalid measure");
     }

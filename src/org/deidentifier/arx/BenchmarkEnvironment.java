@@ -23,8 +23,8 @@ import java.io.IOException;
 import java.util.HashMap;
 
 import org.deidentifier.arx.BenchmarkSetup.BenchmarkAlgorithm;
-import org.deidentifier.arx.BenchmarkSetup.BenchmarkPrivacyModel;
 import org.deidentifier.arx.BenchmarkSetup.BenchmarkDataset;
+import org.deidentifier.arx.BenchmarkSetup.BenchmarkPrivacyModel;
 import org.deidentifier.arx.BenchmarkSetup.BenchmarkQualityMeasure;
 import org.deidentifier.arx.algorithm.AlgorithmBenchmark;
 import org.deidentifier.arx.algorithm.AlgorithmFlash;
@@ -37,7 +37,9 @@ import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFu
 import org.deidentifier.arx.framework.data.DataManager;
 import org.deidentifier.arx.framework.data.Dictionary;
 import org.deidentifier.arx.framework.lattice.SolutionSpace;
+import org.deidentifier.arx.metric.v2.ILMultiDimensionalArithmeticMean;
 import org.deidentifier.arx.metric.v2.ILMultiDimensionalGeometricMean;
+import org.deidentifier.arx.metric.v2.ILMultiDimensionalSum;
 
 import cern.colt.list.DoubleArrayList;
 
@@ -188,6 +190,10 @@ public class BenchmarkEnvironment {
                 double value = 0d;
                 if (result.informationLoss instanceof ILMultiDimensionalGeometricMean) {
                     value = Double.valueOf(((ILMultiDimensionalGeometricMean) result.informationLoss).toString());
+                } else if (result.informationLoss instanceof ILMultiDimensionalArithmeticMean) {
+                    value = Double.valueOf(((ILMultiDimensionalArithmeticMean) result.informationLoss).toString());
+                } else if (result.informationLoss instanceof ILMultiDimensionalSum) {
+                    value = Double.valueOf(((ILMultiDimensionalSum) result.informationLoss).toString());
                 } else {
                     value = (Double) result.informationLoss.getValue();
                 }
