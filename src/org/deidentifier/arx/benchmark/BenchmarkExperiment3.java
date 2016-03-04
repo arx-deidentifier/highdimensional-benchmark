@@ -118,7 +118,10 @@ public class BenchmarkExperiment3 {
     public static BenchmarkQualityMeasure[] getQualityMeasures() {
         return new BenchmarkQualityMeasure[] { 
                 BenchmarkQualityMeasure.AECS,
-                BenchmarkQualityMeasure.LOSS
+                BenchmarkQualityMeasure.LOSS,
+                BenchmarkQualityMeasure.DISCERNIBILITY,
+                BenchmarkQualityMeasure.ENTROPY,
+                BenchmarkQualityMeasure.PRECISION
         };
     }
 
